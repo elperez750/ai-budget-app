@@ -17,16 +17,16 @@ export function Navbar() {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
             <Link href="/" className="text-sm font-medium hover:text-primary">
-              Home
+              Dashboard 
             </Link>
-            <Link href="/about" className="text-sm font-medium hover:text-primary">
-              About
+            <Link href="/transactions" className="text-sm font-medium hover:text-primary">
+              Transactions
             </Link>
             <Link href="/services" className="text-sm font-medium hover:text-primary">
-              Services
+              Budgets
             </Link>
             <Link href="/contact" className="text-sm font-medium hover:text-primary">
-              Contact
+              Chat with AI
             </Link>
           </nav>
 
