@@ -11,49 +11,8 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
-const transactions = [
-  {
-    id:0,
-    title: "Grocery Store",
-    date: "March 28, 2025",
-    amount: -85.32,
-    type: "expense",
-    category: "groceries",
-  },
-  {
-    id:1,
-    title: "Rent Payment",
-    date: "March 25, 2025",
-    amount: -1200.0,
-    type: "expense",
-    category: "housing",
-  },
-  {
-    id:2,
-    title: "Salary Deposit",
-    date: "March 15, 2025",
-    amount: 2350.0,
-    type: "income",
-    category: "salary",
-  },
-  {
-    id:3,
-    title: "Restaurant",
-    date: "March 12, 2025",
-    amount: -64.5,
-    type: "expense",
-    category: "dining",
-  },
-  {
-    id:4,
-    title: "Online Shopping",
-    date: "March 10, 2025",
-    amount: -129.99,
-    type: "expense",
-    category: "shopping",
-  },
-];
+import { transactions } from "../data/TransactionData";
+import Link from "next/link";
 
 const RecentTransactions = () => {
   return (
@@ -65,14 +24,17 @@ const RecentTransactions = () => {
         </CardHeader>
         <CardContent>
           {transactions.map((transaction) => (
-            <div className="flex mt-2 " key={transaction.id || transaction.title}>
+            <div
+              className="flex mt-2 "
+              key={transaction.id || transaction.description}
+            >
               <Avatar className="mr-2">
                 <AvatarImage src="https://github.com/shadcn.png" />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
 
               <div className="flex flex-col justify-center">
-                <p>{transaction.title}</p>
+                <p>{transaction.description}</p>
                 <p>{transaction.date}</p>
               </div>
 
@@ -92,7 +54,9 @@ const RecentTransactions = () => {
         </CardContent>
 
         <CardFooter>
-          <Button className="w-full">View All Transactions</Button>
+          <Link href="/transactions" className="w-full">
+            <Button className="w-full cursor-pointer">View All Transactions</Button>
+          </Link>
         </CardFooter>
       </Card>
     </div>
