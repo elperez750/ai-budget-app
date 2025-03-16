@@ -15,6 +15,11 @@ const uniqueTypes = [
   ...new Set(transactions.map((transaction) => transaction.type)),
 ];
 
+
+const uniqueAccounts = [
+  ...new Set(transactions.map((transaction) => transaction.account))
+];
+
 const AdvancedFilters = () => {
   // Access filters and setFilters from context
   const { filters, setFilters } = useFilters();
@@ -43,6 +48,8 @@ const AdvancedFilters = () => {
           <DatePicker
             label="To"
             date={filters.toDate}
+            isToDate={true} // This flag tells the component to validate against fromDate
+
             isDisabled={filters.fromDate === ""}
             onSelect={(date) => handleFilterChange("toDate", date)}
           />
@@ -61,6 +68,14 @@ const AdvancedFilters = () => {
           valueArray={uniqueTypes}
           valueChange={(value) => handleFilterChange("type", value)}
         />
+
+
+        <FilterDropdown
+          label="Account"
+          valueArray ={uniqueAccounts}
+          valueChange={(value) => handleFilterChange("account" ,value)}
+          />
+
 
         {/* Buttons */}
         <div className="flex justify-end gap-4 p-2">

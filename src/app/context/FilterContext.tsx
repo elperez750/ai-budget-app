@@ -24,9 +24,9 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [filters, setFilters] = useState<FilterType>({
     fromDate: "",
     toDate: "",
-    category: "all",
-    account: "all",
-    type: "all",
+    category: "All",
+    account: "All",
+    type: "All",
   });
 
   return (

@@ -26,7 +26,7 @@ const FilterDropdown = ({label, valueArray, valueChange}: FilterDropdownTypes) =
           <SelectValue placeholder="All" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="All">All {label}</SelectItem>
+          <SelectItem value="All">All</SelectItem>
           {valueArray.map((value) => (
             <SelectItem value={value} key={value}>
               {value}

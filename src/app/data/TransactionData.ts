@@ -1,9 +1,14 @@
+import { FilterType } from "../context/FilterContext";
+
+
 export interface TransactionType {
   id: string;
   date: string;
   description: string;
   category: string;
+  account: string;
   amount: number;
+  type: string;
  
 }
 
@@ -45,5 +50,32 @@ export const transactions = [
   { id: "t35", date: "2025-02-06", description: "Concert Tickets", category: "Entertainment", account: "Amex Card", amount: -120.0, type: "expense" },
 ];
 
+
+export const filterTransactions = (
+  transactions: TransactionType[],
+  filters: FilterType
+): TransactionType[] => {
+  return transactions.filter((transaction) => {
+    // Filter by date range
+    const isWithinDateRange =
+      (!filters.fromDate || transaction.date >= filters.fromDate) &&
+      (!filters.toDate || transaction.date <= filters.toDate);
+
+    // Filter by category
+    const matchesCategory =
+      filters.category === "All" || transaction.category === filters.category;
+
+    // Filter by account
+    const matchesAccount =
+      filters.account === "All" || transaction.account === filters.account;
+
+    // Filter by type
+    const matchesType =
+      filters.type === "All" || transaction.type === filters.type;
+
+    // Include the transaction only if all conditions are met
+    return isWithinDateRange && matchesCategory && matchesAccount && matchesType;
+  });
+};
 
 
