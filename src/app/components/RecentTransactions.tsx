@@ -39,6 +39,7 @@ const RecentTransactions = () => {
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
 
+
               <div className="flex flex-col justify-center">
                 <p>{transaction.description}</p>
                 <p>{transaction.date}</p>

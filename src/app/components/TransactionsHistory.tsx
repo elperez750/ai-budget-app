@@ -34,7 +34,7 @@ const TransactionsHistory = () => {
   
   const endIndex = (currentPage === 0 || filteredTransactions.length === 0)
     ? 0
-    : startIndex + itemsPerPage;
+    : startIndex + itemsPerPage; 
 
   const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage) || 0;
 

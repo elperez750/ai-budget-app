@@ -13,14 +13,16 @@ interface FilterDropdownTypes {
     label: string;
     valueArray: string[];
     valueChange: (label: string) => void
+    selectedValue: string
 }
 
-const FilterDropdown = ({label, valueArray, valueChange}: FilterDropdownTypes) => {
+const FilterDropdown = ({label, valueArray, valueChange, selectedValue}: FilterDropdownTypes) => {
   return (
     <div className="w-full">
     <Label className="block mt-4 mb-2">{label}</Label>
       <Select
         onValueChange={(value) => valueChange(value)}
+        value={selectedValue}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="All" />

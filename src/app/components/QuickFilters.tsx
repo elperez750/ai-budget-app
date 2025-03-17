@@ -27,6 +27,7 @@ const QuickFilters = () => {
         toDate: String(format(today, "yyyy-MM-dd")),
       }));
     }
+    
     else if (date === "Yesterday") {
       const yesterday = new Date(today)
       yesterday.setDate(today.getDate() - 1)

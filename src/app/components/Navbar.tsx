@@ -22,7 +22,7 @@ export function Navbar() {
             <Link href="/transactions" className="text-sm font-medium hover:text-primary">
               Transactions
             </Link>
-            <Link href="/services" className="text-sm font-medium hover:text-primary">
+            <Link href="/budgets" className="text-sm font-medium hover:text-primary">
               Budgets
             </Link>
             <Link href="/contact" className="text-sm font-medium hover:text-primary">

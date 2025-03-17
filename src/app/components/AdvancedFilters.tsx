@@ -1,11 +1,13 @@
-import React from "react";
+"use client"
+
+import React, {useState, useEffect} from "react";
 import { TabsContent } from "@/components/ui/tabs";
 import { transactions } from "../data/TransactionData";
 import DatePicker from "./DatePicker";
 import FilterDropdown from "./FilterDropdown";
 import { Button } from "@/components/ui/button";
 import { useFilters } from "../context/FilterContext"; // Import context
-
+import { FilterType } from "../context/FilterContext";
 // Get unique categories and types from transactions
 const uniqueCategories = [
   ...new Set(transactions.map((transaction) => transaction.category)),
@@ -22,17 +24,37 @@ const uniqueAccounts = [
 
 const AdvancedFilters = () => {
   // Access filters and setFilters from context
+
   const { filters, setFilters } = useFilters();
+  const [tempFilters, setTempFilters] = useState<FilterType>({...filters}) 
+
+  useEffect(() => {
+    setTempFilters({...filters});
+  }, []);
+  
 
   // Handle filter changes
   const handleFilterChange = (key: string, value: string) => {
     console.log(key, value);
-    setFilters((prev) => ({ ...prev, [key]: value }));
+    setTempFilters((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleSubmit = () => {
-    console.log(filters);
+
+  const handleReset = () => {
+    setTempFilters({
+      fromDate: "",
+      toDate: "",
+      category: "All",
+      type: "All",
+      account: "All"
+    });
   };
+
+
+  const handleSubmit = () => {
+    setFilters(tempFilters)
+  };
+
 
   return (
     <div>
@@ -41,16 +63,16 @@ const AdvancedFilters = () => {
         <div className="flex w-1/2 space-x-1 p-1">
           <DatePicker
             label="From"
-            date={filters.fromDate}
+            date={tempFilters.fromDate}
             onSelect={(date) => handleFilterChange("fromDate", date)}
           />
 
           <DatePicker
             label="To"
-            date={filters.toDate}
+            date={tempFilters.toDate}
             isToDate={true} // This flag tells the component to validate against fromDate
 
-            isDisabled={filters.fromDate === ""}
+            isDisabled={tempFilters.fromDate === ""}
             onSelect={(date) => handleFilterChange("toDate", date)}
           />
         </div>
@@ -60,6 +82,7 @@ const AdvancedFilters = () => {
           label="Category"
           valueArray={uniqueCategories}
           valueChange={(value) => handleFilterChange("category", value)}
+          selectedValue={tempFilters.category}
         />
 
         {/* Type Dropdown */}
@@ -67,6 +90,7 @@ const AdvancedFilters = () => {
           label="Type"
           valueArray={uniqueTypes}
           valueChange={(value) => handleFilterChange("type", value)}
+          selectedValue={tempFilters.type}
         />
 
 
@@ -74,12 +98,15 @@ const AdvancedFilters = () => {
           label="Account"
           valueArray ={uniqueAccounts}
           valueChange={(value) => handleFilterChange("account" ,value)}
+          selectedValue={tempFilters.account}
           />
 
 
         {/* Buttons */}
         <div className="flex justify-end gap-4 p-2">
-          <Button className="m-1 bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 transition-colors rounded-md px-4 py-2 font-medium">
+          <Button
+          onClick={handleReset} 
+          className="m-1 bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 transition-colors rounded-md px-4 py-2 font-medium">
             Reset
           </Button>
           <Button
