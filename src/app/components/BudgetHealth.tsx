@@ -6,10 +6,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Activity, AlertTriangle, CheckCircle } from "lucide-react";
 import React from "react";
-import { cn } from "@/lib/utils"; // Assuming you have this utility
 
 interface BudgetHealthProps {
   healthPercentage?: number;

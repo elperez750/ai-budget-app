@@ -13,14 +13,9 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { transactions } from "../data/TransactionData";
 import Link from "next/link";
-import { useFilters } from "../context/FilterContext";
-import { filterTransactions } from "../data/TransactionData";
+
 
 const RecentTransactions = () => {
-
-
-
-
   return (
     <div className="p-6">
       <Card className="h-full">

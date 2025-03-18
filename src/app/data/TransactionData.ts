@@ -50,6 +50,20 @@ export const transactions = [
   { id: "t35", date: "2025-02-06", description: "Concert Tickets", category: "Entertainment", account: "Amex Card", amount: -120.0, type: "expense" },
 ];
 
+export const uniqueCategories = [
+  ...new Set(transactions.map((transaction) => transaction.category)),
+];
+
+export const uniqueTypes = [
+  ...new Set(transactions.map((transaction) => transaction.type)),
+];
+
+
+export const uniqueAccounts = [
+  ...new Set(transactions.map((transaction) => transaction.account))
+];
+
+
 
 export const filterTransactions = (
   transactions: TransactionType[],

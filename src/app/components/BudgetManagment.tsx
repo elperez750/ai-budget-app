@@ -1,4 +1,10 @@
+"use client"
+
 import React from "react";
+import BudgetCard from "./BudgetCard";
+import BudgetHealth from "./BudgetHealth";
+import { useBudget } from "../context/BudgetsContext";
+
 const cardInfo = [
   {
     id: 0,
@@ -27,10 +33,11 @@ const healthPercentage = Math.round(
   (cardInfo[2].amount / cardInfo[0].amount) * 100
 );
 
-import BudgetCard from "./BudgetCard";
-import BudgetHealth from "./BudgetHealth";
+
 
 const BudgetManagment = () => {
+
+  const { budgets, addBudget } = useBudget()
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">Budget Dashboard</h1>

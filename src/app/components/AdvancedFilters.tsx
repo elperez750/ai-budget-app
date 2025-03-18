@@ -2,28 +2,15 @@
 
 import React, {useState, useEffect} from "react";
 import { TabsContent } from "@/components/ui/tabs";
-import { transactions } from "../data/TransactionData";
 import DatePicker from "./DatePicker";
 import FilterDropdown from "./FilterDropdown";
 import { Button } from "@/components/ui/button";
 import { useFilters } from "../context/FilterContext"; // Import context
 import { FilterType } from "../context/FilterContext";
-// Get unique categories and types from transactions
-const uniqueCategories = [
-  ...new Set(transactions.map((transaction) => transaction.category)),
-];
+import { uniqueAccounts, uniqueCategories, uniqueTypes } from "../data/TransactionData";
 
-const uniqueTypes = [
-  ...new Set(transactions.map((transaction) => transaction.type)),
-];
-
-
-const uniqueAccounts = [
-  ...new Set(transactions.map((transaction) => transaction.account))
-];
 
 const AdvancedFilters = () => {
-  // Access filters and setFilters from context
 
   const { filters, setFilters } = useFilters();
   const [tempFilters, setTempFilters] = useState<FilterType>({...filters}) 
