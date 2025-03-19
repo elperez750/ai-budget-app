@@ -20,51 +20,108 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
+import { transactions } from "../data/TransactionData";
 
-
-const chartData = [
-  { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-  { browser: "firefox", visitors: 287, fill: "var(--color-firefox)" },
-  { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-  { browser: "other", visitors: 190, fill: "var(--color-other)" },
+const categories = [
+  ...new Set(
+    transactions
+      .filter((transaction) => transaction.category !== "Income")
+      .map((transaction) => transaction.category) // Extract categories
+  ),
 ];
 
+console.log(categories);
+
+// Then calculate sums for each category
+const sums = categories.map((category) => {
+  const categoryTotal = transactions
+    .filter((transaction) => transaction.category === category)
+    .reduce((sum, transaction) => sum + Math.abs(transaction.amount), 0);
+
+  return categoryTotal;
+});
+
+// Create the final object with two arrays
+const categoryData = categories.map((category, index) => {
+  const normalizedCategory = category
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/\s+/g, "-"); // Replace "&" with "and" and spaces with "-"
+
+  return {
+    category: normalizedCategory,
+    sum: sums[index],
+    fill: `var(--color-${normalizedCategory})`,
+  };
+});
+
 const chartConfig = {
-  visitors: {
-    label: "Visitors",
+  sum: {
+    label: "Amount",
   },
-  chrome: {
-    label: "Chrome",
-    color: "purple",
+  foodDining: {
+    label: "Food & Dining",
+    color: "var(--color-food-dining)",
   },
-  safari: {
-    label: "Safari",
-    color: "orange",
+  transportation: {
+    label: "Transportation",
+    color: "hsl(var(--color-transportation)",
   },
-  firefox: {
-    label: "Firefox",
-    color: "blue",
+  utilities: {
+    label: "Utilities",
+    color: "hsl(var(--color-utilities))",
   },
-  edge: {
-    label: "Edge",
-    color: "red",
+  shopping: {
+    label: "Shopping",
+    color: "hsl(var(--color-shopping))",
   },
-  other: {
-    label: "Other",
-    color: "green",
+  entertainment: {
+    label: "Entertainment",
+    color: "hsl(var(--color-entertainment))",
+  },
+  fitness: {
+    label: "Fitness",
+    color: "hsl(var(--color-fitness))",
+  },
+  housing: {
+    label: "Housing",
+    color: "hsl(var(--color-housing))",
+  },
+  investments: {
+    label: "Investments",
+    color: "hsl(var(--color-investments))",
+  },
+  loans: {
+    label: "Loans",
+    color: "hsl(var(--color-loans))",
+  },
+  healthcare: {
+    label: "Healthcare",
+    color: "hsl(var(--color-healthcare))",
+  },
+  automotive: {
+    label: "Automotive",
+    color: "hsl(var(--color-automotive))",
+  },
+  gifts: {
+    label: "Gifts",
+    color: "hsl(var(--color-gifts))",
+  },
+  travel: {
+    label: "Travel",
+    color: "hsl(var(--color-travel))",
   },
 } satisfies ChartConfig;
 
 export function PieChartSpending() {
   const totalVisitors = React.useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + curr.visitors, 0);
+    return categoryData.reduce((acc, curr) => acc + curr.sum, 0);
   }, []);
 
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Spdending this month</CardTitle>
+        <CardTitle>Spending this month</CardTitle>
         <CardDescription>March 2025</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
@@ -78,9 +135,9 @@ export function PieChartSpending() {
               content={<ChartTooltipContent hideLabel />}
             />
             <Pie
-              data={chartData}
-              dataKey="visitors"
-              nameKey="browser"
+              data={categoryData}
+              dataKey="sum"
+              nameKey="category"
               innerRadius={60}
               strokeWidth={5}
             >
@@ -97,7 +154,7 @@ export function PieChartSpending() {
                         <tspan
                           x={viewBox.cx}
                           y={viewBox.cy}
-                          className="fill-foreground text-3xl font-bold"
+                          className="fill-foreground text-xl font-bold"
                         >
                           {totalVisitors.toLocaleString()}
                         </tspan>
@@ -106,7 +163,7 @@ export function PieChartSpending() {
                           y={(viewBox.cy || 0) + 24}
                           className="fill-muted-foreground"
                         >
-                          Visitors
+                          Dollars spent
                         </tspan>
                       </text>
                     );

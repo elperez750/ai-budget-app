@@ -17,6 +17,7 @@ const TransactionsHistory = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const filteredTransactions = filterTransactions(transactions, filters);
   const itemsPerPage = 10;
+  
 
   // Reset to page 1 when filters change
   useEffect(() => {

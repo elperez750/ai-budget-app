@@ -58,8 +58,8 @@ const AdvancedFilters = () => {
             label="To"
             date={tempFilters.toDate}
             isToDate={true} // This flag tells the component to validate against fromDate
-
             isDisabled={tempFilters.fromDate === ""}
+            tempFilters={tempFilters}
             onSelect={(date) => handleFilterChange("toDate", date)}
           />
         </div>

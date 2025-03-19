@@ -74,7 +74,6 @@ const BudgetHealth: React.FC<BudgetHealthProps> = ({
         </div>
       </CardContent>
       <CardFooter className="pt-2 border-t text-sm text-gray-500">
-        <p>Last updated: Today at 2:30 PM</p>
       </CardFooter>
     </Card>
   );

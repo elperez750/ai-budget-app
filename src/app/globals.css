@@ -84,7 +84,28 @@
   --color-firefox: hsl(var(--chart-3));
   --color-edge: hsl(var(--chart-4));
   --color-other: hsl(var(--chart-5));
+  --color-food-dining: hsl(220, 90%, 55%);
+  --color-transportation: hsl(30, 90%, 55%);
+  --color-income: hsl(140, 70%, 40%);
+  --color-utilities: hsl(190, 80%, 50%);
+  --color-shopping: hsl(340, 80%, 60%);
+  --color-entertainment: hsl(280, 75%, 55%);
+  --color-fitness: hsl(0, 80%, 55%);
+  --color-housing: hsl(210, 80%, 40%);
+  --color-investments: hsl(50, 80%, 50%);
+  --color-loans: hsl(15, 80%, 50%);
+  --color-healthcare: hsl(10, 80%, 60%);
+  --color-automotive: hsl(260, 70%, 50%);
+  --color-gifts: hsl(0, 0%, 50%);
+  --color-travel: hsl(200, 90%, 50%);
+  
+  
+  
+  
+  
+  
 }
+
 
 .dark {
   --background: oklch(0.145 0 0);

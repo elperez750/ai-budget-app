@@ -18,7 +18,7 @@ const BudgetMain = () => {
   }, [budgets])
 
 
-
+  console.log(budgets)
   return (
     <div className="mt-5">
       <Tabs defaultValue="budget-categories" className="">
@@ -32,7 +32,7 @@ const BudgetMain = () => {
             <AddNewBudget />
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {budgets.map((budget: BudgetType) => (
               <BudgetCategoryCard key={budget.id} individualBudget={budget} />
             ))}

@@ -1,3 +1,5 @@
+import { transactions, TransactionType } from "./TransactionData";
+
 export interface BudgetType {
     id: number;
     category: string;
@@ -12,11 +14,6 @@ export const budgets: BudgetType[] = [
 ]
 
 
-const addedBudgets = budgets.reduce(
-    (accumulator, currentValue) => accumulator + currentValue.budget,
-    0 
-  );
-
 
   
-  
+
