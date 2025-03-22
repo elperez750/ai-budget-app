@@ -1,6 +1,5 @@
 import Link from "next/link"
-import { Menu, User } from "lucide-react"
-
+import { Menu, User, LogIn } from "lucide-react"
 import { Button } from "../../components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "../../components/ui/sheet"
 
@@ -27,6 +26,9 @@ export function Navbar() {
             </Link>
             <Link href="/contact" className="text-sm font-medium hover:text-primary">
               Chat with AI
+            </Link>
+            <Link href="/auth" className="text-sm font-medium hover:text-primary">
+              <Button className="cursor-pointer"><LogIn />Login / Signup</Button>
             </Link>
           </nav>
 
