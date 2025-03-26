@@ -1,7 +1,14 @@
-import Link from "next/link"
-import { Menu, User, LogIn } from "lucide-react"
-import { Button } from "../../components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "../../components/ui/sheet"
+"use client";
+
+import Link from "next/link";
+import { Menu, User, LogIn } from "lucide-react";
+import { Button } from "../../components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetTitle,
+} from "../../components/ui/sheet";
 
 export function Navbar() {
   return (
@@ -16,19 +23,31 @@ export function Navbar() {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
             <Link href="/" className="text-sm font-medium hover:text-primary">
-              Dashboard 
+              Dashboard
             </Link>
-            <Link href="/transactions" className="text-sm font-medium hover:text-primary">
+            <Link
+              href="/transactions"
+              className="text-sm font-medium hover:text-primary"
+            >
               Transactions
             </Link>
-            <Link href="/budgets" className="text-sm font-medium hover:text-primary">
+            <Link
+              href="/budgets"
+              className="text-sm font-medium hover:text-primary"
+            >
               Budgets
             </Link>
-            <Link href="/contact" className="text-sm font-medium hover:text-primary">
+            <Link
+              href="/contact"
+              className="text-sm font-medium hover:text-primary"
+            >
               Chat with AI
             </Link>
-            <Link href="/auth" className="text-sm font-medium hover:text-primary">
-              <Button className="cursor-pointer"><LogIn />Login / Signup</Button>
+            <Link href="/auth">
+              <Button className="cursor-pointer" size="sm">
+                <LogIn className="w-4 h-4 mr-1" />
+                Login / Signup
+              </Button>
             </Link>
           </nav>
 
@@ -48,18 +67,25 @@ export function Navbar() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-[240px] sm:w-[300px]">
-                <nav className="flex flex-col gap-4 mt-8">
+                <SheetTitle className="text-lg font-semibold mt-4">
+                  Menu
+                </SheetTitle>
+                <nav className="flex flex-col gap-4 mt-6">
                   <Link href="/" className="text-sm font-medium">
-                    Home
+                    Dashboard
                   </Link>
-                  <Link href="/about" className="text-sm font-medium">
-                    About
+                  <Link href="/transactions" className="text-sm font-medium">
+                    Transactions
                   </Link>
-                  <Link href="/services" className="text-sm font-medium">
-                    Services
+                  <Link href="/budgets" className="text-sm font-medium">
+                    Budgets
                   </Link>
                   <Link href="/contact" className="text-sm font-medium">
-                    Contact
+                    Chat with AI
+                  </Link>
+                  <Link href="/auth" className="text-sm font-medium flex items-center gap-2">
+                    <LogIn className="w-4 h-4" />
+                    Login / Signup
                   </Link>
                 </nav>
               </SheetContent>
@@ -68,6 +94,5 @@ export function Navbar() {
         </div>
       </div>
     </header>
-  )
+  );
 }
-

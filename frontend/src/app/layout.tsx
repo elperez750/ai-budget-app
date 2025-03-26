@@ -5,6 +5,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "../components/ui/sonner";
 import { NavbarWrapper } from "./NavbarWrapper"; // new component
 
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -28,8 +29,8 @@ export default function RootLayout({
       >
         <NavbarWrapper />
         {children}
-        <Toaster />
-      </body>
+        <Toaster richColors toastOptions={{ style: { zIndex: 9999 } }} />      
+        </body>
     </html>
   );
 }

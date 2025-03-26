@@ -1,10 +1,11 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework import status
-from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth import authenticate
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import CustomTokenObtainPairSerializer
+from rest_framework_simplejwt.exceptions import  TokenError
+
 
 # Create your views here.
 class SignUpView(APIView):
@@ -29,20 +30,16 @@ class SignUpView(APIView):
    
 
 
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
-class SignInView(APIView):
-    def post(self, request):
-        username = request.data.get("username")
-        password = request.data.get("password")
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
 
-        user = authenticate(username=username, password=password)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except TokenError as e:
+            # Return a short error message
+            return Response(str(e), status=status.HTTP_401_UNAUTHORIZED)
 
-        if user is not None:
-            refresh = RefreshToken.for_user(user)
-            return Response({
-                "refresh": str(refresh),
-                "access": str(refresh.access_token)
-            })
-        else:
-            return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
