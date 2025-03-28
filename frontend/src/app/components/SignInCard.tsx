@@ -113,7 +113,7 @@ const SignInCard = () => {
               />
             </div>
           </CardContent>
-          <CardFooter>
+          <CardFooter className="mt-4">
             <Button type="submit" className="w-full cursor-pointer">
               Sign In
             </Button>

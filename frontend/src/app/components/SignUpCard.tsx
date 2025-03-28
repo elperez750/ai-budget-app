@@ -148,7 +148,7 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ setActiveTab }) => {
               />
             </div>
           </CardContent>
-          <CardFooter>
+          <CardFooter className="mt-4">
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Creating Account..." : "Create Account"}
             </Button>
