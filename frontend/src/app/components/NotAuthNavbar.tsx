@@ -11,8 +11,10 @@ import {
   SheetClose,
 } from "../../components/ui/sheet";
 import { Avatar, AvatarFallback } from "../../components/ui/avatar";
-
+import { useAuth } from "../context/AuthContext"
 const NotAuthNavbar = () => {
+
+  const {logout} = useAuth()
   return (
     
     <div>
@@ -37,6 +39,9 @@ const NotAuthNavbar = () => {
                 <LogIn className="w-4 h-4 mr-2" />
                 Log In / Sign Up 
               </Button>
+
+
+      
             </Link>
             
             <div className="h-6 w-px bg-border hidden md:block"></div>

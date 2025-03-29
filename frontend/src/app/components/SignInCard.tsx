@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "../../components/ui/button";
 import { Label } from "../../components/ui/label";
 import { Input } from "../../components/ui/input";
+import { useAuth } from "../context/AuthContext";
 
 const SignInCard = () => {
   //Setting state for our form inputs
@@ -27,6 +28,7 @@ const SignInCard = () => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,31 +42,19 @@ const SignInCard = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/users/login/",
-        {
-          username,
-          password,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      console.log("calling login function. Pressing the button!")
+      const result = await login(username, password);
+      console.log("Login function returned:", result);
 
-      if (response.status >= 200 && response.status < 300) {
-        console.log(response.data);
-        localStorage.setItem("accessToken", response.data.access);
-        localStorage.setItem("refreshToken", response.data.refresh);
-        localStorage.setItem("username", response.data.user.username);
-        localStorage.setItem("email", response.data.user.email);
-
+      if (result.success) {
         router.push("/");
       } else {
-        setSigninError("Login failed. Please try again.");
+        // Handle case where login returned success: false
+        setSigninError(result.error || "Login failed. Please try again.");
       }
     } catch (error: any) {
+      setSigninError("Login failed. Please try again.");
+
       // Improved error handling
       if (error.response?.data) {
         // Handle specific API error messages
@@ -72,7 +62,6 @@ const SignInCard = () => {
           setSigninError(error.response.data);
         }
       }
-       
     } finally {
       setIsLoading(false);
     }
@@ -106,8 +95,7 @@ const SignInCard = () => {
               <Input
                 id="signin_password"
                 type="password"
-                value={password} 
-
+                value={password}
                 placeholder="••••••"
                 onChange={(e) => setPassword(e.target.value)}
               />

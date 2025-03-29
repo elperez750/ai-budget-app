@@ -5,6 +5,8 @@ from rest_framework import status
 from rest_framework_simplejwt.exceptions import TokenError
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import IsAuthenticated
+from users.authentication import CookieJWTAuthentication
 
 
 # Create your views here.
@@ -40,8 +42,27 @@ class LogOutView(APIView):
         response.delete_cookie('refresh_token')
         
         return response
+    
 
 
+
+class UserProfileView(APIView):
+    authentication_classes = [CookieJWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        user = request.user
+
+        user_data = {
+            "username": user.username,
+            "email": user.email
+        }
+
+
+        return Response(user_data)
+    
+
+   
 
 class LoginView(APIView):
     def post(self, request):
@@ -64,14 +85,13 @@ class LoginView(APIView):
             #The reason we do user.email is because we did not pass in the email in the request.
             #so when we authenticate, we basically return all attributes of user, including email
             response_data = {
-                "message": "Login successful",
                 "username": username,
                 "email": user.email,
             }
 
 
             #set the response_data to the response we will sent to user
-            response = Response(response_data, stautus=status.HTTP_200_OK)
+            response = Response(response_data, status=status.HTTP_200_OK)
 
 
             #Setting access token in cookies for user
@@ -82,6 +102,7 @@ class LoginView(APIView):
                 secure=False,
                 samesite="Lax",
                 max_age=60 * 30,
+                path='/'
             )
 
 
@@ -93,6 +114,7 @@ class LoginView(APIView):
                 secure=False,
                 samesite="Lax",
                 max_age=3600 * 24 * 7,
+                path='/'
             )
 
             #Finally returning the response
@@ -101,7 +123,7 @@ class LoginView(APIView):
         #this is if the user is not in the database, meaning that there was either invalid credentials or user doesn't exist
         else:
             return Response(
-                {"message": "Invalud credentials"}, status=status.HTTP_401_UNAUTHORIZED
+                {"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED
             )
 
 
@@ -133,6 +155,7 @@ class CookieTokenRefreshView(APIView):
                 secure=False,  # Set to True in production
                 samesite="Lax",
                 max_age=60 * 30,  # 30 minutes
+                path='/'
             )
 
             return response

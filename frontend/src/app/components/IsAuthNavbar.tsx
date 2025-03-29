@@ -10,8 +10,11 @@ import {
   SheetClose,
 } from "../../components/ui/sheet";
 import { Avatar, AvatarFallback } from "../../components/ui/avatar";
+import { UserType } from '../../utils/api';
+import { useAuth } from '../context/AuthContext';
+const IsAuthNavbar = ({username, email}: UserType) => {
 
-const IsAuthNavbar = () => {
+  const {logout} = useAuth()
   return (
     <div>
       <header>
@@ -29,6 +32,8 @@ const IsAuthNavbar = () => {
   
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-6">
+               
+            
               <Link 
                 href="/" 
                 className="text-sm font-medium flex items-center gap-1.5 transition hover:text-primary"
@@ -67,9 +72,14 @@ const IsAuthNavbar = () => {
               
               <Avatar className="h-8 w-8 border hidden md:flex">
                 <AvatarFallback className="bg-muted text-xs">
-                  EP
+                  {username}
+                
                 </AvatarFallback>
               </Avatar>
+
+              <Button onClick={logout}>
+                Log out
+              </Button>
   
               {/* Mobile Menu */}
               <Sheet>
@@ -125,8 +135,7 @@ const IsAuthNavbar = () => {
                     </SheetClose>
                     
                     <div className="h-px bg-border my-2"></div>
-                    
-                    
+                   
                   </nav>
                   
                   <div className="absolute bottom-6 left-0 right-0 px-4">

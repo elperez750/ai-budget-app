@@ -107,7 +107,7 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ setActiveTab }) => {
             )}
 
             <div className="space-y-1">
-              <Label htmlFor="signup_name">Name</Label>
+              <Label htmlFor="signup_name">Username</Label>
               <Input
                 id="signup_name"
                 value={username}

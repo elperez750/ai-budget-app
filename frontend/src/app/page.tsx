@@ -1,13 +1,15 @@
+"use client"
 import React from "react";
 import RecentTransactions from "./components/RecentTransactions";
 import { PieChartSpending } from "./components/PieChartSpending";
 import AuthRequired from "./components/LoggedOutHome";
+import { useAuth } from "./context/AuthContext";
 
 export default function Home() {
-  const showAuthRequired = true;
+  const {user} = useAuth()
   return (
     <div>
-      {showAuthRequired ? (
+      {!user ? (
         <AuthRequired />
       ) : (
         <>
