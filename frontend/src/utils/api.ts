@@ -13,6 +13,7 @@ const API_URL = 'http://localhost:8000';
 
 
 
+
 const axiosInstance: AxiosInstance = axios.create({
     baseURL: API_URL,
     withCredentials: true,
@@ -50,6 +51,7 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(error)
     }
 )
+
 
 
 
