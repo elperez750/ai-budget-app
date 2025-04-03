@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, User, LogIn, BarChart3, PieChart, MessageSquare, CreditCard, Home } from "lucide-react";
+import { Menu, LogIn, CreditCard } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import {
   Sheet,
@@ -33,10 +33,10 @@ const NotAuthNavbar = () => {
 
 
           {/* Right Side Items */}
-          <div className="flex items-center gap-3 mr-2">
+          <div className="flex items-center mr-2">
             <Link href="/auth">
               <Button className="hidden md:flex items-center" size="sm" variant="default">
-                <LogIn className="w-4 h-4 mr-2" />
+                <LogIn className="w-4 h-4 mr-2 cursor-pointer" />
                 Log In / Sign Up 
               </Button>
 
@@ -44,14 +44,7 @@ const NotAuthNavbar = () => {
       
             </Link>
             
-            <div className="h-6 w-px bg-border hidden md:block"></div>
             
-            <Avatar className="h-8 w-8 border hidden md:flex">
-              <AvatarFallback className="bg-muted text-xs">
-                User
-              </AvatarFallback>
-            </Avatar>
-
             {/* Mobile Menu */}
             <Sheet>
               <SheetTrigger asChild>
