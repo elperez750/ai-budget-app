@@ -2,7 +2,8 @@
 "use client"
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { api, UserType } from '../../utils/api';
+import { UserApi, UserType } from '../../utils/UserApi';
+import { api } from '../../utils/axios';
 
 interface AuthContextType {
   user: UserType | null;
@@ -41,7 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
         // Make the request with detailed error handling
         try {
-          const userData = await api.getUserProfile();
+          const userData = await UserApi.getUserProfile();
           console.log("✅ User profile fetch successful:", userData);
           setUser(userData);
           console.log("User state updated with profile data");
@@ -80,7 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     try {
       console.log("Making API request to login endpoint");
-      const data = await api.login(username, password);
+      const data = await UserApi.login(username, password);
       console.log("✅ Login API response received:", data);
       
       // Check if the response contains user data
@@ -123,7 +124,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     try {
       console.log("Making API request to logout endpoint");
-      await api.logout();
+      await UserApi.logout();
       console.log("✅ Logout API call successful");
     } catch (error) {
       console.error("❌ Logout error:", error);

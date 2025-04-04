@@ -10,7 +10,7 @@ import {
   SheetClose,
 } from "../../components/ui/sheet";
 import { Avatar, AvatarFallback } from "../../components/ui/avatar";
-import { UserType } from '../../utils/api';
+import { UserType } from '../../utils/UserApi';
 import { useAuth } from '../context/AuthContext';
 const IsAuthNavbar = ({username, email}: UserType) => {
 

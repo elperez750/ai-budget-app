@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { TabsContent } from "../../components/ui/tabs";
-import axios from "axios";
 import {
   Card,
   CardContent,

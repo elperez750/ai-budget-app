@@ -6,6 +6,10 @@
 
 env/
 venv/
+.env
+
+**/.env
+
 
 /.pnp
 .pnp.*
@@ -18,6 +22,7 @@ venv/
 # testing
 /coverage
 
+\backend\.env
 # next.js
 **/.next/
 /out/
@@ -37,6 +42,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env.local
+
 
 # vercel
 .vercel

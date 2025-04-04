@@ -4,7 +4,7 @@ import RecentTransactions from "./components/RecentTransactions";
 import { PieChartSpending } from "./components/PieChartSpending";
 import AuthRequired from "./components/LoggedOutHome";
 import { useAuth } from "./context/AuthContext";
-
+import PlaidLink from "./components/PlaidLink";
 export default function Home() {
   const {user} = useAuth()
   return (
@@ -13,6 +13,7 @@ export default function Home() {
         <AuthRequired />
       ) : (
         <>
+          <PlaidLink />
           <RecentTransactions />
           <PieChartSpending />
         </>
