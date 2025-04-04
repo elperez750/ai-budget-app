@@ -6,7 +6,7 @@ export const PlaidApi = {
     },
 
     async exchangePublicToken(publicToken: string) {
-        return api.post<{ accessToken: string }>('/api/finance/exchange_public_token/', { publicToken })
+        return api.post<{ access_token: string }>('/api/finance/exchange_public_token/', { publicToken })
     },
 
     async syncTransactions(accessToken: string, cursor?: string) {

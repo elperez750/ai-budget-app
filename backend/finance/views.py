@@ -32,7 +32,7 @@ class CreateLinkTokenView(APIView):
 
 class ExchangePublicTokenView(APIView):
     def post(self, request):
-        public_token = request.data.get("public_token")
+        public_token = request.data.get("publicToken")
 
         exchange_data = plaid_service.exchange_public_token(public_token)
 
@@ -44,7 +44,7 @@ class ExchangePublicTokenView(APIView):
 
 class SimulateTransactionsView(APIView):
     def post(self, request):
-        access_token = request.data.get("access_token")
+        access_token = request.data.get("accessToken")
         print("Received access_token:", access_token)
 
         if not access_token:

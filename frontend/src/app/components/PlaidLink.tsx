@@ -43,9 +43,10 @@ export default function PlaidLink() {
     try {
       setIsLoading(true);
       // Exchange the public token for an access token
-      const { accessToken }= await PlaidApi.exchangePublicToken(publicToken);
+      const { access_token } = await PlaidApi.exchangePublicToken(publicToken);
       // Store the access token
-      setAccessToken(accessToken);
+      console.log('Access token received:', access_token); // Log the access token for debugging
+      setAccessToken(access_token);
       console.log('Successfully linked account:', metadata);
 
 
