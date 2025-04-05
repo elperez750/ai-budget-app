@@ -11,11 +11,14 @@ import {
 
 import { Button } from "../../components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
-import { transactions } from "../data/TransactionData";
+import { useTransactions } from "../context/TransactionsContext";
 import Link from "next/link";
 
 
 const RecentTransactions = () => {
+
+
+  const { transactions } = useTransactions();
   return (
     <div className="p-6">
       <Card className="h-full">
@@ -27,16 +30,15 @@ const RecentTransactions = () => {
           {transactions.map((transaction) => (
             <div
               className="flex mt-2 "
-              key={transaction.id || transaction.description}
+              key={transaction.transaction_id || transaction.currency}
             >
               <Avatar className="mr-2">
-                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarImage src={transaction.logo_url} />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
-
-
+                
               <div className="flex flex-col justify-center">
-                <p>{transaction.description}</p>
+                <p>{transaction.name}</p>
                 <p>{transaction.date}</p>
               </div>
 

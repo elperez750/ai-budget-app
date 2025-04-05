@@ -71,8 +71,8 @@ class PlaidWebhookView(APIView):
 
 class SyncTransactionsView(APIView):
     def post(self, request):
-        access_token = request.data.get("access_token")
-        cursor = request.data.get("cursor", None)
+        access_token = request.data.get("accessToken")
+        cursor = request.data.get("cursor", "")
 
         if not access_token:
             return Response({"error": "Missing access_token parameter"}, status=400)
@@ -86,4 +86,6 @@ class SyncTransactionsView(APIView):
                 print("Error syncing transactions", str(e))
                 return Response({"error": str(e)}, status=500)
             
+            
 
+    

@@ -83,7 +83,7 @@ class PlaidService:
         self.client.sandbox_item_fire_webhook(webhook_request)
 
 
-    def sync_transactions(self, access_token, cursor=None):
+    def sync_transactions(self, access_token, cursor=""):
         request = TransactionsSyncRequest(
             access_token=access_token,
             cursor=cursor # Optional: Use a cursor to paginate through results. If None, it will start from the beginning.

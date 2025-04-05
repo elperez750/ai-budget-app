@@ -3,7 +3,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { UserApi, UserType } from '../../utils/UserApi';
-import { api } from '../../utils/axios';
 
 interface AuthContextType {
   user: UserType | null;
@@ -28,10 +27,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   
+
   // Check authentication status on initial load with detailed logging
   useEffect(() => {
     console.log("=====================================");
     console.log("AUTH CHECK STARTED ON PAGE LOAD/REFRESH");
+    
     
     async function checkAuth() {
       try {
