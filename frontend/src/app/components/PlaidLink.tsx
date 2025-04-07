@@ -13,16 +13,38 @@ export default function PlaidLink() {
     isLinkLoading,
     setIsLinkLoading,
     accessToken,
+    setAccessToken,
+    hasAccessToken,
   } = usePlaid(); // Optional: If you want to use PlaidApi directly for exchanging tokens
 
-  const { transactions, fetchTransactions, setIsTransactionLoading } =
-    useTransactions(); // Get the function to set transactions from TransactionsContext
+  const {
+    transactions,
+    fetchTransactions,
+    setIsTransactionLoading,
+    setTransaction,
+  } = useTransactions(); // Get the function to set transactions from TransactionsContext
 
   useEffect(() => {
-    const initializeLinkToken = async () => {
-      await generateLinkToken(); // Generate the link token when the component mounts
+    const initializeTokens = async () => {
+      const initializeLinkToken = async () => {
+        await generateLinkToken(); // Generate the link token when the component mounts
+      };
+
+      const accessToken = await hasAccessToken();
+      if (accessToken == null) {
+        setIsTransactionLoading(false);
+        setAccessToken(null); // from context
+        setTransaction([]); // from context
+        console.log("No access token found, generating link token...");
+        await initializeLinkToken();
+      } else {
+        console.log("Access token found:", accessToken);
+        // Optionally fetch transactions if access token already exists
+        getTransactions(accessToken); // Fetch transactions if access token is available
+      }
     };
-    initializeLinkToken();
+
+    initializeTokens();
   }, []);
 
   const getTransactions = async (accessToken: string) => {

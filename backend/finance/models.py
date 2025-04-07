@@ -1,8 +1,34 @@
 from django.db import models
-from django.contrib.auth.models import UserProfile
-# Create your models here.
-class Transaction(models.Model):
-    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+from django.contrib.auth.models import User
 
-    transaction_id = models.CharField(max_length=100, unique=True)  # Unique identifier for the transaction
-    account_id = models.CharField(max_length=100)  # Account associated with the transaction
+# Create your models here.
+
+class AccessToken(models.Model):
+    """
+    Model to store the access token and item_id returned by Plaid after exchanging the public token.
+    This allows you to associate the access token with a user or account in your system.
+    """
+    access_token = models.CharField(max_length=100, unique=True)  # Access token from Plaid
+    item_id = models.CharField(max_length=100)  # Item ID from Plaid
+    user_profile = models.ForeignKey(User, on_delete=models.CASCADE, related_name='access_tokens')  # Link to UserProfile
+    created_at = models.DateTimeField(auto_now_add=True)  # Timestamp when the access token was created
+
+    def __str__(self):
+        return f"AccessToken({self.access_token})"
+    
+    
+
+class Transaction(models.Model):
+    access_token = models.ForeignKey(AccessToken, on_delete=models.CASCADE, related_name='transactions')  # Link to AccessToken
+    name = models.CharField(max_length=255)  # Name of the transaction (e.g., merchant name)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)  # Amount of the transaction
+    date = models.DateField()  # Date of the transaction (YYYY-MM-DD)
+    category = models.CharField(max_length=255, blank=True, null=True)  # Category of the transaction (e.g., groceries, dining)
+    currency = models.CharField(max_length=10, default='USD')  # Currency of the transaction (default is USD)
+    transaction_id = models.CharField(max_length=100, unique=True)  # Unique transaction ID from Plaid
+    
+    def __str__(self):
+        """
+        String representation of the Transaction object for easier debugging and logging.
+        """
+        return f"Transaction(name={self.name}, amount={self.amount}, date={self.date}, transaction_id={self.transaction_id})"

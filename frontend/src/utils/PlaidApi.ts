@@ -16,6 +16,11 @@ export const PlaidApi = {
 
     async simulateTransactions(accessToken: string) {
         return api.post('/api/finance/simulate_transactions/', { accessToken })
+    },
+
+    async hasAccessToken() {
+        // This method can be used to validate if the access token is still valid
+        return api.get('/api/finance/has_token/')
     }
 
 }

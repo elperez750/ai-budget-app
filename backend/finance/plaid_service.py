@@ -1,4 +1,5 @@
 import plaid
+from plaid import Configuration, ApiClient
 from plaid.api import plaid_api
 from dotenv import load_dotenv
 import os
@@ -12,10 +13,8 @@ from plaid.model.transactions_refresh_request import TransactionsRefreshRequest
 from plaid.model.item_public_token_exchange_request import ItemPublicTokenExchangeRequest
 from plaid.model.webhook_type import WebhookType
 from plaid.model.transactions_sync_request import TransactionsSyncRequest
-from plaid.model.transactions_sync_response import TransactionsSyncResponse
 
 load_dotenv()
-
 
 
 
@@ -26,10 +25,10 @@ class PlaidService:
         client_id = os.getenv("PLAID_CLIENT_ID")
         secret = os.getenv("PLAID_SECRET")
         configuration = plaid.Configuration(
-            host=plaid.Environment.Sandbox, # Use Sandbox for testing purposes
+            host=plaid.Environment.Sandbox, 
             api_key={
-                'clientId': client_id, # Replace with your Plaid client ID
-                'secret': secret, # Replace with your Plaid secret
+                'clientId': client_id, 
+                'secret': secret,
             }
         )
 
@@ -51,7 +50,7 @@ class PlaidService:
             webhook="https://df3e-88-162-5-123.ngrok.io/api/finance/webhook/"
 
         )
-
+        
         response = self.client.link_token_create(request)
         response_dict = response.to_dict()
         link_token = response_dict.get('link_token')
@@ -86,7 +85,9 @@ class PlaidService:
     def sync_transactions(self, access_token, cursor=""):
         request = TransactionsSyncRequest(
             access_token=access_token,
-            cursor=cursor # Optional: Use a cursor to paginate through results. If None, it will start from the beginning.
+            cursor=cursor, # Optional: Use a cursor to paginate through results. If None, it will start from the beginning.
+            count=10,
+
         )
 
 

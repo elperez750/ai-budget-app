@@ -12,10 +12,13 @@ type TransactionType = {
   category: string; // Category of the transaction (e.g., 'Food', 'Transport', etc.)
   logo_url: string; // Icon representing the transaction type (optional)
   currency: string; // Currency of the transaction (e.g., 'USD', 'EUR', etc.)
+  
 };
 
 interface TransactionContextType {
   transactions: TransactionType[]; // Array of transactions
+  setTransaction: React.Dispatch<
+    React.SetStateAction<TransactionType[]>>
   fetchTransactions: () => void; // Function to update the transactions
   isTransactionLoading: boolean; // Optional: Loading state to indicate if transactions are being fetched
   setIsTransactionLoading: React.Dispatch<React.SetStateAction<boolean>>; // Function to set loading state
@@ -24,6 +27,7 @@ interface TransactionContextType {
 // Create the TransactionContext with default values
 const TransactionContext = createContext<TransactionContextType>({
   transactions: [],
+  setTransaction: () => {}, // Default no-op function for setting transactions
   fetchTransactions: () => {},
   isTransactionLoading: true,
   setIsTransactionLoading: () => {},
@@ -62,6 +66,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
     <TransactionContext.Provider
       value={{
         transactions,
+        setTransaction,
         fetchTransactions, // Expose the fetch function to allow manual fetching of transactions
         isTransactionLoading,
         setIsTransactionLoading,

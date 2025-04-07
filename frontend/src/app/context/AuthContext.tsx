@@ -3,6 +3,8 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { UserApi, UserType } from '../../utils/UserApi';
+import { usePlaid } from './PlaidContext'; // Ensure this is imported to set the access token in PlaidApi after login
+import { useTransactions } from './TransactionsContext'; // Ensure this is imported to set transactions after login
 
 interface AuthContextType {
   user: UserType | null;
@@ -24,6 +26,8 @@ const AuthContext = createContext<AuthContextType>({
 // Provider component
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserType | null>(null);
+  const { setAccessToken } = usePlaid(); // Get the function to set access token from PlaidContext
+  const { setTransaction } = useTransactions(); // Get the function to set transactions from TransactionsContext, if needed
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   
@@ -126,6 +130,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       console.log("Making API request to logout endpoint");
       await UserApi.logout();
+      setAccessToken(null); // Clear the access token in Plaid context, if applicable
+      setTransaction([]); // Clear transactions in the Transactions context, if applicable
       console.log("✅ Logout API call successful");
     } catch (error) {
       console.error("❌ Logout error:", error);
