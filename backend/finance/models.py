@@ -39,3 +39,25 @@ class Transaction(models.Model):
         """
         return f"Transaction(name={self.name}, amount={self.amount}, date={self.date}, transaction_id={self.transaction_id})"
     
+class Budget(models.Model):
+    budget_category = models.CharField(max_length=255)  # Name of the budget (e.g., "Groceries", "Entertainment")
+    budget_amount = models.DecimalField(max_digits=10, decimal_places=2)  # Total budget amount for the category
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='budgets')  # Link to UserProfile
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Budget({self.budget_name}, {self.budget_amount})"
+    
+
+class BankAccount(models.Model):
+    access_token = models.ForeignKey(AccessToken, on_delete=models.CASCADE, related_name='bank_accounts')
+    account_id = models.CharField(max_length=100, unique=True)  # Unique ID for the bank account
+    account_name = models.CharField(max_length=255)  # Name of the bank account (e.g., "Checking", "Savings")
+    current_balance = models.DecimalField(max_digits=10, decimal_places=2)  # Current balance of the bank account
+    available_balance = models.DecimalField(max_digits=10, decimal_places=2)  # Available balance of the bank account
+    currency = models.CharField(max_length=10, default='USD')  # Currency of the bank account (default is USD)
+
+
+    def __str__(self):
+        return f"BankAccount({self.account_name}, {self.current_balance})"

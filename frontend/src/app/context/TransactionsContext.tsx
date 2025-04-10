@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { PlaidApi } from "../../utils/PlaidApi";
 import { usePlaid } from "./PlaidContext";
+import { useAuth } from "./AuthContext";
 
 export type TransactionType = {
   transaction_id: string;
@@ -23,103 +24,73 @@ export type TransactionType = {
 interface TransactionContextType {
   transactions: TransactionType[];
   setTransaction: React.Dispatch<React.SetStateAction<TransactionType[]>>;
-  fetchTransactions: () => void;
+  fetchTransactions: () => Promise<void>;
   isTransactionLoading: boolean;
   setIsTransactionLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  hasSynced: boolean;
-  setHasSynced: React.Dispatch<React.SetStateAction<boolean>>;
+  accounts: any[];
 }
 
 const TransactionContext = createContext<TransactionContextType>({
   transactions: [],
   setTransaction: () => {},
-  fetchTransactions: () => {},
-  isTransactionLoading: true,
+  fetchTransactions: async () => {},
+  isTransactionLoading: false,
   setIsTransactionLoading: () => {},
-  hasSynced: false,
-  setHasSynced: () => {},
+  accounts: [],
 });
 
 export const useTransactions = () => useContext(TransactionContext);
 
 export const TransactionProvider = ({ children }: { children: ReactNode }) => {
   const [transactions, setTransaction] = useState<TransactionType[]>([]);
-  const [isTransactionLoading, setIsTransactionLoading] = useState(true);
-  const [hasSynced, setHasSynced] = useState(false);
+  const [accounts, setAccounts] = useState<any[]>([]);
+  const [isTransactionLoading, setIsTransactionLoading] = useState(false);
 
   const { hasAccessToken } = usePlaid();
+  const { user } = useAuth();
 
-
-
-
-  const fetchFromDatabase = async () => {
-    const token = await hasAccessToken();
-    if (!token) return;
-
-    try {
-
-      setIsTransactionLoading(true);
-      const response: any = await PlaidApi.fetchTransactionsFromDB(token);
-      setTransaction(response);
-    } catch (err) {
-      console.error("DB fetch error:", err);
-    } finally {
-      setIsTransactionLoading(false);
-    }
-  };
-
-  const syncWithPlaid = async () => {
-    const token = await hasAccessToken();
-
-    if (!token) return;
-
-    try {
-      setIsTransactionLoading(true);
-      const response: any = await PlaidApi.syncTransactions(token);
-      setTransaction(response);
-      localStorage.setItem("hasSynced", "true");
-      setHasSynced(true);
-    } catch (err) {
-      console.error("Plaid sync error:", err);
-    } finally {
-      setIsTransactionLoading(false);
-    }
-  };
-
+  // Function to fetch transactions
   const fetchTransactions = async () => {
+    // Get access token
     const token = await hasAccessToken();
-
-    if (!token) {
-      console.error("Missing access token");
-      return;
+    if (!token) return;
+    
+    setIsTransactionLoading(true);
+    
+    try {
+      // Try database first
+      const dbResults: any = await PlaidApi.fetchTransactionsFromDB(token);
+      
+      // If database has transactions, use them
+      if (dbResults && dbResults.transactions.length > 0) {
+        setTransaction(dbResults.transactions);
+        setAccounts(dbResults.accounts || []);
+      } 
+      // Otherwise sync with Plaid
+      else {
+        const plaidResults: any = await PlaidApi.syncTransactions(token);
+        
+        if (plaidResults && plaidResults.transactions) {
+          setTransaction(plaidResults.transactions);
+          setAccounts(plaidResults.accounts || []);
+        } else if (Array.isArray(plaidResults)) {
+          setTransaction(plaidResults);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+    } finally {
+      setIsTransactionLoading(false);
     }
-
-    hasSynced ? await fetchFromDatabase() : await syncWithPlaid();
   };
 
+  // Fetch transactions when user is available
   useEffect(() => {
-    const checkTokenAndSync = async () => {
-      const token = await hasAccessToken();
-      
-      // Only access localStorage in the browser
-      const rawSyncStatus = localStorage.getItem("hasSynced");
-      const isSynced = rawSyncStatus === "true";
-      setHasSynced(isSynced);
-      
-      if (token) {
-        if (isSynced) {
-          await fetchFromDatabase();
-        } else {
-          await syncWithPlaid();
-        }
-      } else {
-        setIsTransactionLoading(false);
-      }
-    };
-    
-    checkTokenAndSync();
-  }, []); // Empty dependency array to run only once on mount
-  
+    if (user?.id) {
+      fetchTransactions();
+    }
+  }, [user?.id]);
+
   return (
     <TransactionContext.Provider
       value={{
@@ -128,8 +99,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
         fetchTransactions,
         isTransactionLoading,
         setIsTransactionLoading,
-        hasSynced,
-        setHasSynced,
+        accounts,
       }}
     >
       {children}

@@ -73,6 +73,36 @@ class PlaidService:
 }
 
 
+
+    def get_accounts(self, access_token):
+        """
+        Retrieve account information from Plaid
+        
+        Args:
+            access_token: The Plaid access token
+            
+        Returns:
+            Dictionary containing account data
+        """
+        try:
+            # Create request for accounts
+            from plaid.model.accounts_get_request import AccountsGetRequest
+            
+            request = AccountsGetRequest(
+                access_token=access_token
+            )
+            
+            # Call the accounts/get endpoint
+            response = self.client.accounts_get(request)
+            
+            # Convert response to dictionary
+            return response.to_dict()
+        except Exception as e:
+            
+            return {"accounts": [], "error": str(e)}
+        
+
+
     def simulate_transactions(self, access_token):
         webhook_request = SandboxItemFireWebhookRequest(
             access_token=access_token,
