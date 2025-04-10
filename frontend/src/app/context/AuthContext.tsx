@@ -138,10 +138,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       console.log("Clearing user state regardless of logout API result");
       setUser(null);
-      console.log("Redirecting to auth page");
-      router.push('/auth');
-      console.log("Logout process completed");
-      console.log("=====================================");
+      
     }
   };
 

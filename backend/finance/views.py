@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from .plaid_service import PlaidService
 import logging
 import traceback
-from .models import AccessToken
+from .models import AccessToken, Transaction
 from rest_framework.permissions import IsAuthenticated
 from users.authentication import CookieJWTAuthentication
 
@@ -39,16 +39,15 @@ class CreateLinkTokenView(APIView):
 class ExchangePublicTokenView(APIView):
     def post(self, request):
         public_token = request.data.get("publicToken")
-
         exchange_data = plaid_service.exchange_public_token(public_token)
  
 
-
         access_token = exchange_data.get('access_token', None)
         item_id = exchange_data.get('item_id', None)
+        cursor = exchange_data.get('cursor', None)  # Get the cursor if available
+        print(cursor)
 
-        AccessToken.objects.create(access_token=access_token, item_id=item_id, user_profile=request.user)  # Assuming you have a user in request, e.g., from authentication)
-
+        AccessToken.objects.create(access_token=access_token, item_id=item_id, user_profile=request.user, cursor=cursor)  # Assuming you have a user in request, e.g., from authentication)
 
 
 
@@ -102,19 +101,81 @@ class SyncTransactionsView(APIView):
     def post(self, request):
         access_token = request.data.get("accessToken")
         cursor = request.data.get("cursor", "")
-    
         if not access_token:
             return Response({"error": "Missing access_token parameter"}, status=400)
         
-        else:
-            try:
-                transactions = plaid_service.sync_transactions(access_token, cursor=cursor)
-                return Response(transactions, status=200)
-            
-            except Exception as e:
-                print("Error syncing transactions", str(e))
-                return Response({"error": str(e)}, status=500)
-            
-            
 
+        try:
+            access_token_object = AccessToken.objects.get(access_token=access_token)  # Get the access token for the authenticated user
+        except AccessToken.DoesNotExist:
+            return Response({"error": "Access token not found"}, status=404)
+        
+
+        try:
+            all_added_transactions = []  # Initialize an empty list to store all added transactions
+            while True:
+                sync_result = plaid_service.sync_transactions(access_token, cursor)
+                all_added_transactions.extend(sync_result.get('added', []))
+                cursor = sync_result.get('next_cursor', None)
+
+                if not sync_result.get('has_more'):
+                    break
+
+           
+
+            access_token_object.cursor = sync_result.get('next_cursor', access_token_object.cursor)  # Update the cursor in the database
+            access_token_object.save()
+
+
+            for transaction in all_added_transactions:
+                try:
+                    if Transaction.objects.filter(transaction_id=transaction.get('transaction_id')).exists():
+                        print(f"Transaction {transaction.get('transaction_id')} already exists. Skipping.")
+                        continue
+                    
+                    Transaction.objects.create(
+                        access_token=access_token_object,
+                        name=transaction.get('name', ''),
+                        amount=transaction.get('amount', 0),
+                        date=transaction.get('date'),
+                        logo_url=transaction.get('logo_url', ''),
+                        category=','.join(transaction.get('category', [])),
+                        currency=transaction.get('iso_currency_code', 'USD'),
+                        transaction_id=transaction.get('transaction_id', '')
+                    )
+
+
+            
+                except Exception as e:
+                    print(f"Error saving transaction {transaction.get('transaction_id')}: {e}")
+                    traceback.print_exc()     
+
+
+            return Response(all_added_transactions, status=200)
+ 
+
+
+        except Exception as e:
+            print("Error syncing transactions:", e)
+            traceback.print_exc()  
+        
+
+class FetchTransactionsFromDBView(APIView):
+    authentication_classes = [CookieJWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+
+    def get(self, request):
+            access_token = request.query_params.get("accessToken")
+            if not access_token:
+                return Response({"error": "Missing access_token parameter"}, status=400)
+
+            try: 
+                token_obj = AccessToken.objects.get(access_token=access_token)  # Get the access token for the authenticated user
+                user_transactions = Transaction.objects.filter(access_token = token_obj).values()
+                return Response(user_transactions, status=200)
+            except Exception as e:
+                print("Error fetching transactions:", e)
+                traceback.print_exc()  
+                return Response({"error": "Internal server error"}, status=500)
     

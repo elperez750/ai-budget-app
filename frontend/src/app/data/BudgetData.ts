@@ -1,4 +1,3 @@
-import { transactions, TransactionType } from "./TransactionData";
 
 export interface BudgetType {
     id: number;

@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useState, useEffect } from "react";
 import {
   Card,
@@ -8,25 +10,38 @@ import {
   CardTitle,
 } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
-import { transactions } from "../data/TransactionData";
+import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
 import { useFilters } from "../context/FilterContext";
 import { filterTransactions } from "../data/TransactionData";
+import { useTransactions } from "../context/TransactionsContext";
+import { usePlaid } from "../context/PlaidContext";
+
+// Loading spinner component
+const LoadingSpinner = () => (
+  <div className="flex justify-center items-center py-8">
+    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+  </div>
+);
 
 const TransactionsHistory = () => {
   const { filters } = useFilters();
+  const { transactions, isTransactionLoading, fetchTransactions } = useTransactions();
   const [currentPage, setCurrentPage] = useState(1);
   const filteredTransactions = filterTransactions(transactions, filters);
   const itemsPerPage = 10;
-  
 
-  // Reset to page 1 when filters change
+
+    useEffect(() => {
+
+        fetchTransactions(); // Ensures fetch is always triggered on page load
+     
+    }, []);
+
+
   useEffect(() => {
-    if (filteredTransactions.length === 0) {
-      setCurrentPage(0);
-    } else if (currentPage === 0) {
-      setCurrentPage(1);
-    }
-  }, [filteredTransactions.length, currentPage]);
+    // Reset to page 1 when filters change
+    setCurrentPage(1);
+  }, [filters]);
 
   // Calculate pagination values
   const startIndex = (currentPage === 0 || filteredTransactions.length === 0) 
@@ -48,12 +63,22 @@ const TransactionsHistory = () => {
   const handlePrevPage = () => {
     if (currentPage > 1){
       setCurrentPage(currentPage - 1);
-      
     } 
   };
 
+  // Format date function
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
+  };
+
+
   return (
-    <div className="mt-5 mx-auto max-w-5xl">
+    <div className="mt-5 mx-auto max-w-6xl">
       <Card className="shadow-lg border rounded-xl">
         <CardHeader>
           <CardTitle className="text-lg font-semibold">
@@ -65,63 +90,67 @@ const TransactionsHistory = () => {
         </CardHeader>
 
         <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-sm">
-              <thead>
-                <tr className="border-b bg-gray-50">
-                  <th className="p-3 text-left font-medium">Date</th>
-                  <th className="p-3 text-left font-medium">Description</th>
-                  <th className="p-3 text-left font-medium">Amount</th>
-                  <th className="p-3 text-right font-medium">Category</th>
-                  <th className="p-3 text-right font-medium">Account</th>
-                  <th className="p-3 text-right font-medium">Type</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredTransactions.length > 0 ? (
-                  filteredTransactions
-                    .slice(startIndex, endIndex)
-                    .map((transaction) => (
-                      <tr
-                        key={transaction.id}
-                        className="border-b hover:bg-gray-100 transition"
-                      >
-                        <td className="p-3">{transaction.date}</td>
-                        <td className="p-3">{transaction.description}</td>
-                        {transaction.type === "income" ? (
-                          <td className="p-3 text-green-600 font-semibold">
-                            +${transaction.amount.toFixed(2)}
-                          </td>
-                        ) : (
-                          <td className="p-3 text-red-600 font-semibold">
-                            -${Math.abs(transaction.amount).toFixed(2)}
-                          </td>
-                        )}
-                        <td className="p-3 text-right">{transaction.category}</td>
-                        <td className="p-3 text-right">{transaction.account}</td>
-                        <td className="p-3 text-right capitalize">
-                          <span
-                            className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              transaction.type === "income"
-                                ? "bg-green-100 text-green-600"
-                                : "bg-red-100 text-red-600"
-                            }`}
-                          >
-                            {transaction.type}
-                          </span>
-                        </td>
-                      </tr>
-                    ))
-                ) : (
-                  <tr>
-                    <td className="p-4 text-center text-gray-500">
-                      No transactions match your current filters
-                    </td>
+          {isTransactionLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse text-sm">
+                <thead>
+                  <tr className="border-b bg-gray-50">
+                    <th className="p-3 text-left font-medium">Date</th>
+                    <th className="p-3 text-left font-medium">Merchant</th>
+                    <th className="p-3 text-left font-medium">Category</th>
+                    <th className="p-3 text-right font-medium">Amount</th>
+                    <th className="p-3 text-center font-medium">Logo</th>
                   </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {filteredTransactions.length > 0 ? (
+                    filteredTransactions
+                      .slice(startIndex, endIndex)
+                      .map((transaction) => (
+                        <tr
+                          key={transaction.transaction_id}
+                          className="border-b hover:bg-gray-50 transition"
+                        >
+                          <td className="p-3 align-middle">
+                            {formatDate(transaction.date)}
+                          </td>
+                          <td className="p-3 align-middle font-medium">
+                            {transaction.name}
+                          </td>
+                          <td className="p-3 align-middle">
+                           
+                          </td>
+                          <td className={`p-3 text-right align-middle font-semibold ${
+                            transaction.amount >= 0 
+                              ? "text-green-600" 
+                              : "text-red-600"
+                          }`}>
+                            {transaction.amount >= 0 ? "+" : ""}
+                            {transaction.amount.toFixed(2)} {transaction.currency}
+                          </td>
+                          <td className="p-3 text-center align-middle">
+                            <Avatar className="inline-block h-8 w-8">
+                              <AvatarImage src={transaction.logo_url} alt={transaction.name} />
+                              <AvatarFallback>
+                                {transaction.name?.[0]?.toUpperCase() || '?'}
+                              </AvatarFallback>
+                            </Avatar>
+                          </td>
+                        </tr>
+                      ))
+                  ) : (
+                    <tr>
+                      <td colSpan={5} className="p-3 text-center text-gray-500">
+                        No transactions found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
         </CardContent>
 
         <CardFooter className="flex justify-between items-center px-6 py-4">
@@ -136,7 +165,7 @@ const TransactionsHistory = () => {
             <Button
               onClick={handlePrevPage}
               disabled={currentPage <= 1 || filteredTransactions.length === 0}
-              className="px-4 py-2 rounded-lg text-sm cursor-pointer"
+              className="px-4 py-2 rounded-lg text-sm"
               variant="outline"
             >
               ← Previous
@@ -147,7 +176,7 @@ const TransactionsHistory = () => {
             <Button
               onClick={handleNextPage}
               disabled={currentPage >= totalPages || filteredTransactions.length === 0}
-              className="px-4 py-2 rounded-lg text-sm cursor-pointer"
+              className="px-4 py-2 rounded-lg text-sm"
               variant="outline"
             >
               Next →

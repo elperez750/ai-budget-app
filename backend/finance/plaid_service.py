@@ -86,8 +86,7 @@ class PlaidService:
         request = TransactionsSyncRequest(
             access_token=access_token,
             cursor=cursor, # Optional: Use a cursor to paginate through results. If None, it will start from the beginning.
-            count=10,
-
+            count=100,
         )
 
 

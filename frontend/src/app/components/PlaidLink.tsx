@@ -58,8 +58,8 @@ export default function PlaidLink() {
         console.log("Fetching transactions for access token:", accessToken);
 
         fetchTransactions(); // Clear previous transactions before fetching new ones (optional, depending on your use case)
-        alert("Successfully fetched transactions!");
         console.log("Transactions received:", transactions); // Log the transactions for debugging
+        
       } catch (error) {
         console.error("Error fetching transactions:", error);
       } finally {

@@ -92,7 +92,7 @@ export function PlaidProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error("Error exchanging public token:", error);
     } finally {
-      setIsLinkLoading(false);
+      setIsLinkLoading(false); 
     }
   }
 
