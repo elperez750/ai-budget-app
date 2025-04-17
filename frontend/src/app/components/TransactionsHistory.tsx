@@ -165,7 +165,7 @@ const TransactionsHistory = () => {
             <Button
               onClick={handlePrevPage}
               disabled={currentPage <= 1 || filteredTransactions.length === 0}
-              className="px-4 py-2 rounded-lg text-sm"
+              className="px-4 py-2 rounded-lg text-sm cursor-pointer"
               variant="outline"
             >
               ← Previous
@@ -176,7 +176,7 @@ const TransactionsHistory = () => {
             <Button
               onClick={handleNextPage}
               disabled={currentPage >= totalPages || filteredTransactions.length === 0}
-              className="px-4 py-2 rounded-lg text-sm"
+              className="px-4 py-2 rounded-lg text-sm cursor-pointer"
               variant="outline"
             >
               Next →

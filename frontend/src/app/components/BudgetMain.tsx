@@ -4,7 +4,7 @@ import { Tabs, TabsList, TabsTrigger } from "../../components/ui/tabs";
 import React, { useEffect } from "react";
 import BudgetCategoryCard from "./BudgetCategoryCard";
 import { TabsContent } from "@radix-ui/react-tabs";
-import { useBudget } from "../context/BudgetsContext";
+import { useBudget } from "../context/BudgetContext";
 
 import AddNewBudget from "./AddNewBudget";
 import { BudgetType } from "../data/BudgetData";
