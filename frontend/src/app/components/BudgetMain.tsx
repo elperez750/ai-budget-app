@@ -7,18 +7,25 @@ import { TabsContent } from "@radix-ui/react-tabs";
 import { useBudget } from "../context/BudgetContext";
 
 import AddNewBudget from "./AddNewBudget";
-import { BudgetType } from "../data/BudgetData";
+import { BudgetType } from "../types/BudgetTypes";
+
 
 const BudgetMain = () => {
 
-  const { budgets } = useBudget();
+  const { budgets, fetchBudgets } = useBudget();
+
+  const getBudgets = () => {
+    
+
+  }
 
   useEffect(() => {
     console.log("change in budget data")
-  }, [budgets])
-
+    fetchBudgets()
+  }, [])
 
   console.log(budgets)
+
   return (
     <div className="mt-5">
       <Tabs defaultValue="budget-categories" className="">
@@ -34,7 +41,7 @@ const BudgetMain = () => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {budgets.map((budget: BudgetType) => (
-              <BudgetCategoryCard key={budget.id} individualBudget={budget} />
+              <BudgetCategoryCard key={budget.budget_amount} individualBudget={budget} />
             ))}
           </div>
         </TabsContent>

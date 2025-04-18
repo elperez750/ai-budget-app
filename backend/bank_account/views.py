@@ -4,10 +4,12 @@ from django.shortcuts import render
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from ..plaid_integration.plaid_service import PlaidService
+from plaid_service import PlaidService
 import logging
 import traceback
-from .models import AccessToken, Transaction, Budget, BankAccount
+from .models import AccessToken, BankAccount
+from transactions.models import Transaction
+from budgets.models import Budget
 from rest_framework.permissions import IsAuthenticated
 from users.authentication import CookieJWTAuthentication
 from django.db import transaction as db_transaction
@@ -15,6 +17,26 @@ from django.db import transaction as db_transaction
 logger = logging.getLogger(__name__)
 
 plaid_service = PlaidService()
+
+class AccountListView(APIView):
+    """
+    View to list all accounts.
+    """
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [CookieJWTAuthentication]
+
+    def get(self, request):
+        """
+        List all accounts.
+        """
+        access_token = request.query_params.get("access_token")
+        if not access_token:
+            return Response({"error": "Access token is required"}, status=400)
+        
+        accounts = sync_accounts(access_token)
+        return Response(accounts, status=200)
+
+
 
 
 def get_access_token_object(access_token):
@@ -98,5 +120,5 @@ def save_account(account, access_token_obj):
 
 
 
-
+    
 

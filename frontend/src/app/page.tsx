@@ -1,7 +1,6 @@
 "use client"
 import React from "react";
 import RecentTransactions from "./components/RecentTransactions";
-import { PieChartSpending } from "./components/PieChartSpending";
 import AuthReqired from "./components/LoggedOutHome";
 import { useAuth } from "./context/AuthContext";
 import PlaidLink from "./components/PlaidLink";
@@ -23,7 +22,6 @@ export default function Home() {
         <>
           <PlaidLink />
           <RecentTransactions />
-          <PieChartSpending />
         </>
       ) : (
         // Not authenticated user content

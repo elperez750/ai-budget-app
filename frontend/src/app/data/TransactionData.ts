@@ -1,5 +1,5 @@
 import { FilterType } from "../context/FilterContext";
-import { TransactionType } from "../context/TransactionsContext";
+import { TransactionType } from "../types/TransactionTypes"; 
 export const transactions = [
   { id: "t1", date: "2025-03-12", description: "Grocery Store", category: "Food & Dining", account: "Chase Checking", amount: -85.32, type: "expense" },
   { id: "t2", date: "2025-03-11", description: "Gas Station", category: "Transportation", account: "Visa Card", amount: -42.76, type: "expense" },

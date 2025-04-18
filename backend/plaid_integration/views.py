@@ -1,10 +1,13 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .plaid_service import PlaidService
+from plaid_service import PlaidService
 import logging
 import traceback
-from .models import AccessToken, Transaction, Budget, BankAccount
+from .models import AccessToken
+from transactions.models import Transaction
+from budgets.models import Budget
+from bank_account.models import BankAccount
 from rest_framework.permissions import IsAuthenticated
 from users.authentication import CookieJWTAuthentication
 from django.db import transaction as db_transaction

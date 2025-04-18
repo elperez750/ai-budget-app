@@ -6,6 +6,7 @@ import BudgetManagment from "../components/BudgetManagment";
 import BudgetMain from "../components/BudgetMain";
 import { BudgetProvider } from "../context/BudgetContext";
 import ProtectedRoute from "../components/ProtectedRoute";
+import { useBudget } from "../context/BudgetContext";
 import NoBudgetsYet from "../components/NoBudgets";
 
 
@@ -13,12 +14,14 @@ const Page = () => {
 
   
 
-  const showBudget = false;
+  const { budgets } = useBudget()
+
+
   return (
     <ProtectedRoute>
       <BudgetProvider>
         <div className="flex flex-col p-4 md:p-6 lg:p-10">
-          {showBudget ? (
+          {budgets ? (
             <>
                <BudgetManagment />
                <BudgetMain />

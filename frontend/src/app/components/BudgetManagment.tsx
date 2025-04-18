@@ -3,16 +3,18 @@
 import React from "react";
 import BudgetCard from "./BudgetCard";
 import BudgetHealth from "./BudgetHealth";
-import { useBudget } from "../context/BudgetsContext";
-import { transactions, TransactionType } from "../data/TransactionData";
-
-
+import { useBudget } from "../context/BudgetContext";
+import { transactions } from "../data/TransactionData";
+import { TransactionType } from "../types/TransactionTypes";
+import { useTransactions } from "../context/TransactionsContext";
 const BudgetManagment = () => {
 
-  const { budgets, addBudget } = useBudget()
+  const { budgets } = useBudget()
+  const { transactions } = useTransactions()
+
 
   const addedBudgets = budgets.reduce(
-    (accumulator, currentValue) => accumulator + currentValue.budget,
+    (accumulator, currentValue) => accumulator + currentValue.budget_amount,
     0 
   );
 
@@ -27,7 +29,7 @@ const sumByAmounts = (
 };
 
 
-const allBudgetCategories = budgets.map(budget => budget.category)  
+const allBudgetCategories = budgets.map(budget => budget.budget_category)  
 const totalOfBudgetSpent = Math.abs(sumByAmounts(transactions, allBudgetCategories))
 
 const remainingInBudget = addedBudgets - totalOfBudgetSpent
