@@ -12,7 +12,8 @@ import {
 import { Avatar, AvatarFallback } from "../../components/ui/avatar";
 import { UserType } from '../../utils/UserApi';
 import { useAuth } from '../context/AuthContext';
-const IsAuthNavbar = ({username, email}: UserType) => {
+const IsAuthNavbar = ({username}: Omit<UserType, "id" | "email">) => {
+
 
   const {logout} = useAuth()
   return (

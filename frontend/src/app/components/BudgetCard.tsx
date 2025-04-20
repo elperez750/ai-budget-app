@@ -1,13 +1,12 @@
 import {
     Card,
     CardContent,
-    CardDescription,
     CardFooter,
     CardHeader,
     CardTitle,
   } from "../../components/ui/card";
   import React from "react";
-  import { Wallet, TrendingUp, TrendingDown, Landmark } from "lucide-react";
+  import { Wallet, TrendingUp, TrendingDown } from "lucide-react";
   
   interface BudgetCardProps {
     label: string;

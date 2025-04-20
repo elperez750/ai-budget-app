@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -12,6 +12,8 @@ import { TransactionType } from "../types/TransactionTypes";
 import { Progress } from "../../components/ui/progress";
 import { ArrowDownCircle, ArrowUpCircle, Trash } from "lucide-react";
 import { useTransactions } from "../context/TransactionsContext";
+
+import DeleteBudgetButton from "./DeleteBudgetButton";
 
 interface BudgetCategoryCardProps {
   individualBudget: BudgetType;
@@ -28,7 +30,7 @@ const sumByAmounts = (
   category: string
 ): number => {
   if (!transactions || !Array.isArray(transactions)) return 0;
-  
+
   return transactions
     .filter((transaction) => transaction.category === category)
     .reduce((total, transaction) => total + Number(transaction.amount), 0);
@@ -42,7 +44,7 @@ const sumByAmounts = (
 const formatCurrency = (amount: number): string => {
   // Guard against NaN values
   if (isNaN(amount)) return "$0.00";
-  
+
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -57,46 +59,50 @@ const formatCurrency = (amount: number): string => {
  */
 const BudgetCategoryCard = ({ individualBudget }: BudgetCategoryCardProps) => {
   const { transactions } = useTransactions();
-  
+
   // Ensure budget_amount is a number
-  const budgetAmount = Number(individualBudget.budget_amount) || 0;
-  
+  const budgetAmount = Number(individualBudget.budgetAmount) || 0;
+
   // Calculate spending metrics
-  const totalSpent = Math.abs(sumByAmounts(transactions, individualBudget.budget_category));
+  const totalSpent = Math.abs(
+    sumByAmounts(transactions, individualBudget.budgetCategory)
+  );
   const moneyRemaining = budgetAmount - totalSpent;
-  
+
   // Guard against division by zero
-  const percentageSpent = budgetAmount > 0 
-    ? Math.round((totalSpent / budgetAmount) * 100) 
-    : 0;
-  
+  const percentageSpent =
+    budgetAmount > 0 ? Math.round((totalSpent / budgetAmount) * 100) : 0;
+
   // Determine status based on spending
   const isOverBudget = moneyRemaining < 0;
-  const statusColor = isOverBudget 
-    ? "text-red-500" 
-    : percentageSpent > 80 
-      ? "text-amber-500" 
-      : "text-emerald-500";
-  
+  const statusColor = isOverBudget
+    ? "text-red-500"
+    : percentageSpent > 80
+    ? "text-amber-500"
+    : "text-emerald-500";
+
+
   return (
     <Card className="shadow-md hover:shadow-lg transition-shadow duration-300 w-full">
       <CardHeader className="pb-2 sm:pb-3">
         <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-1 sm:gap-0">
-          <CardTitle className="text-lg font-semibold">{individualBudget.budget_name}</CardTitle>
+          <CardTitle className="text-lg font-semibold">
+            {individualBudget.budgetName}
+          </CardTitle>
           <CardDescription className="flex justify-around text-sm font-medium mt-1 sm:mt-0 items-center gap-1 ">
             Budget: {formatCurrency(budgetAmount)}
-            <Trash className="h-4 w-4 text-red-500" />
+           <DeleteBudgetButton budgetId={individualBudget.budgetId}/>
           </CardDescription>
         </div>
       </CardHeader>
-      
+
       <CardContent className="py-2 sm:py-3">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 gap-2 sm:gap-0">
           <div className="flex items-center gap-2">
             <span className="text-gray-600 text-sm">Spent:</span>
             <span className="font-medium">{formatCurrency(totalSpent)}</span>
           </div>
-          
+
           <div className="flex items-center gap-1 mt-1 sm:mt-0">
             {isOverBudget ? (
               <ArrowUpCircle className="h-4 w-4 text-red-500" />
@@ -104,17 +110,17 @@ const BudgetCategoryCard = ({ individualBudget }: BudgetCategoryCardProps) => {
               <ArrowDownCircle className="h-4 w-4 text-emerald-500" />
             )}
             <span className={`font-medium ${statusColor}`}>
-              {isOverBudget 
-                ? `-${formatCurrency(Math.abs(moneyRemaining))}` 
+              {isOverBudget
+                ? `-${formatCurrency(Math.abs(moneyRemaining))}`
                 : formatCurrency(moneyRemaining)}
             </span>
           </div>
         </div>
 
         <div className="space-y-1">
-          <Progress 
-            value={Math.min(percentageSpent, 100)} 
-            className={`h-2 ${isOverBudget ? "bg-red-100" : "bg-gray-100"}`} 
+          <Progress
+            value={Math.min(percentageSpent, 100)}
+            className={`h-2 ${isOverBudget ? "bg-red-100" : "bg-gray-100"}`}
           />
           <div className="flex justify-between text-xs text-gray-500">
             <span>0%</span>
@@ -125,11 +131,11 @@ const BudgetCategoryCard = ({ individualBudget }: BudgetCategoryCardProps) => {
           </div>
         </div>
       </CardContent>
-      
+
       <CardFooter className="pt-0 pb-3 sm:pb-4">
         <p className={`text-sm font-medium ${statusColor}`}>
-          {isOverBudget 
-            ? `${percentageSpent}% over budget` 
+          {isOverBudget
+            ? `${percentageSpent}% over budget`
             : `${percentageSpent}% of budget used`}
         </p>
       </CardFooter>

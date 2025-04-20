@@ -52,3 +52,15 @@ class BudgetFetchView(APIView):
         budget = Budget.objects.filter(user=user_id).values()
         return Response(budget, status=200)
         
+
+class BudgetDeleteView(APIView):
+
+    def delete(self, request):
+
+
+        budget_id = request.query_params["budgetId"]
+
+        budget = Budget.objects.get(id=budget_id)
+        budget.delete()
+
+        return Response({"message": "Budget deleted successfully"}, status=200)

@@ -12,7 +12,7 @@ export function Navbar() {
   return (
     <>
       {user ? (
-        <IsAuthNavbar username={user.username} email={user.email} />
+        <IsAuthNavbar username={user.username} />
       ) : (
         <NotAuthNavbar />
       )}

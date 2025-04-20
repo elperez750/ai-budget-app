@@ -4,13 +4,33 @@ import {
   useContext,
   useEffect,
   ReactNode,
-  useCallback
+  useCallback,
 } from "react";
 import { BudgetsApi } from "../../utils/BudgetsApi";
-import { BudgetContextType } from "../types/BudgetTypes";
-import { BudgetType } from "../types/BudgetTypes"; // Import your Budget type
+import { BudgetContextType, BudgetType } from "../types/BudgetTypes";
 import { useAuth } from "./AuthContext";
-// Define types for your budget data
+
+// ✅ Define a reusable input type for forms and API
+export type BudgetInputType = Omit<BudgetType, "budgetId">;
+
+// ✅ API → Frontend mapping
+export const mapBudgetFromApi = (budget: any): BudgetType => ({
+  budgetId: budget.id,
+  budgetName: budget.budget_name,
+  budgetAmount: parseFloat(budget.budget_amount),
+  budgetPeriod: budget.budget_period,
+  budgetCategory: budget.budget_category,
+});
+
+
+
+// ✅ Frontend → API mapping
+export const mapBudgetToApi = (budget: BudgetInputType) => ({
+  budget_name: budget.budgetName,
+  budget_amount: budget.budgetAmount,
+  budget_period: budget.budgetPeriod,
+  budget_category: budget.budgetCategory,
+});
 
 // Create the context with default values
 const BudgetContext = createContext<BudgetContextType>({
@@ -19,96 +39,73 @@ const BudgetContext = createContext<BudgetContextType>({
   error: null,
   fetchBudgets: async () => {},
   createBudget: async () => {},
-  //updateBudget: async () => {},
-  //deleteBudget: async () => {}
-});
+  deleteBudget: async () => {},
+} );
 
-// Provider component
 export function BudgetProvider({ children }: { children: ReactNode }) {
-  const { user } = useAuth(); // Get the user from AuthContext, ensure user is authenticated
+  const { user } = useAuth();
   const [budgets, setBudgets] = useState<BudgetType[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch all budgets
-
-  
-  const fetchBudgets = async () => {
-    setIsLoading(true);
-    setError(null);
-    
-
+  // 🔁 Fetch all budgets
+  const fetchBudgets = useCallback(async () => {
     if (!user) {
       console.error("User is not authenticated or user ID is missing");
       return;
-  }
+    }
+
+    setIsLoading(true);
+    setError(null);
 
     try {
       const data: any = await BudgetsApi.fetchBudgets(user.id);
-      setBudgets(data);
+      const mappedBudgets = data.map(mapBudgetFromApi);
+      setBudgets(mappedBudgets);
     } catch (err) {
       setError("Failed to fetch budgets");
       console.error(err);
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [user]);
 
-
-  // Create new budget
-  const createBudget = useCallback(async (budgetData: Omit<BudgetType, "id">) => {
-    setIsLoading(true);
-    setError(null);
-
-    if (!user) {
+  // 🧾 Create new budget
+  const createBudget = useCallback(
+    async (budgetData: BudgetInputType) => {
+      if (!user) {
         console.error("User is not authenticated or user ID is missing");
         return;
-    }
+      }
 
-    try {
-      const newBudget: any = await BudgetsApi.createNewBudget(user.id, budgetData);
-      await fetchBudgets()
-      console.log("New budget created:", newBudget);
-    } catch (err) {
-      setError("Failed to create budget");
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [user, fetchBudgets] )// Add user as a dependency
+      setIsLoading(true);
+      setError(null);
 
-  /*
-  // Update existing budget
-  const updateBudget = async (id: string, budgetData: Partial<Budget>) => {
+      try {
+        const newBudget = await BudgetsApi.createNewBudget(
+          user.id,
+          mapBudgetToApi(budgetData)
+        );
+        console.log("New budget created:", newBudget);
+        await fetchBudgets(); // Refresh budgets after creation
+      } catch (err) {
+        setError("Failed to create budget");
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [user, fetchBudgets]
+  );
+
+  // 🗑️ Delete budget
+  const deleteBudget = async (budgetId: number) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
-      const updatedBudget = await BudgetApi.updateBudget(id, budgetData);
-      setBudgets(budgets.map(budget => 
-        budget.id === id ? updatedBudget : budget
-      ));
-    } catch (err) {
-      setError("Failed to update budget");
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-
-  */
-
-  /*
-
-  // Delete budget
-  const deleteBudget = async (id: string) => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      await BudgetApi.deleteBudget(id);
-      setBudgets(budgets.filter(budget => budget.id !== id));
+      await BudgetsApi.deleteBudget(budgetId);
+      setBudgets((prev) => prev.filter((b) => b.budgetId !== budgetId));
     } catch (err) {
       setError("Failed to delete budget");
       console.error(err);
@@ -116,23 +113,21 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
       setIsLoading(false);
     }
   };
-*/
 
-  // Load budgets on first render
+  // 🪄 Load budgets when user is authenticated
   useEffect(() => {
-    //fetchBudgets();
-    console.log("Hello there from the budgets context");
-  }, []);
+    if (user) {
+      fetchBudgets();
+    }
+  }, [user, fetchBudgets]);
 
-  // Create the context value
-  const contextValue = {
+  const contextValue: BudgetContextType = {
     budgets,
     isLoading,
     error,
     fetchBudgets,
     createBudget,
-    //updateBudget,
-    // deleteBudget
+    deleteBudget,
   };
 
   return (
@@ -142,5 +137,5 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// Custom hook to use the budget context
+// 🎯 Custom hook to use the context
 export const useBudget = () => useContext(BudgetContext);

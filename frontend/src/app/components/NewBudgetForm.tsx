@@ -21,29 +21,28 @@ import {
 } from "../../components/ui/select";
 import { PlusCircle } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { BudgetType } from "../types/BudgetTypes";
-interface NoBudgetsYetProps {
-  onCreateBudget: (budgetData: BudgetType) => void;
-}
+import type { BudgetInputType } from "../context/BudgetContext";
 
-
-
+// 👇 Redefine input type to match form state (budgetAmount as string for input handling)
+type BudgetFormInput = Omit<BudgetInputType, "budgetAmount"> & { budgetAmount: string };
 
 const NewBudgetForm = () => {
-  const { user } = useAuth(); // Get the user from AuthContext, ensure user is authenticated
-    const { budgets, createBudget } = useBudget();
+  const { user } = useAuth();
+  const { budgets, createBudget } = useBudget();
+
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const [formData, setFormData] = useState({
-    budget_name: "",
-    budget_amount: "",
-    budget_period: "monthly",
-    budget_category: "general",
+
+  const [formData, setFormData] = useState<BudgetFormInput>({
+    budgetName: "",
+    budgetAmount: "",
+    budgetPeriod: "monthly",
+    budgetCategory: "general",
   });
 
   const [errors, setErrors] = useState({
-    budget_name: "",
-    budget_amount: "",
+    budgetName: "",
+    budgetAmount: "",
   });
 
   const handleMouseEnter = () => setIsHovered(true);
@@ -51,71 +50,62 @@ const NewBudgetForm = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
 
-    // Clear error when user types
-    if (name in errors && errors[name as keyof typeof errors]) {
-      setErrors({
-        ...errors,
-        [name]: "",
-      });
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value, // 👈 Keep as string for both fields
+    }));
+
+    if (errors[name as keyof typeof errors]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
-  const handleSelectChange = (name: string, value: string) => {
-    setFormData({
-      ...formData,
+  const handleSelectChange = (name: keyof BudgetFormInput, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
-    });
+    }));
   };
 
   const handleSubmit = () => {
     if (!user) {
-      console.error('User is not authenticated');
+      console.error("User is not authenticated");
       return;
     }
 
-    // Validate form
     const newErrors = {
-      budget_name: "",
-      budget_amount: "",
+      budgetName: "",
+      budgetAmount: "",
     };
 
-    if (!formData.budget_name.trim()) {
-      newErrors.budget_name = "Budget name is required";
+    if (!formData.budgetName.trim()) {
+      newErrors.budgetName = "Budget name is required";
     }
 
-    if (
-      !formData.budget_amount ||
-      isNaN(Number(formData.budget_amount)) ||
-      Number(formData.budget_amount) <= 0
-    ) {
-      newErrors.budget_amount = "Please enter a valid amount";
+    const parsedAmount = parseFloat(formData.budgetAmount);
+    if (!formData.budgetAmount || isNaN(parsedAmount) || parsedAmount <= 0) {
+      newErrors.budgetAmount = "Please enter a valid amount";
     }
 
-    if (newErrors.budget_name || newErrors.budget_amount) {
+    if (newErrors.budgetName || newErrors.budgetAmount) {
       setErrors(newErrors);
       return;
     }
 
- 
-
+    // ✅ Pass valid number to createBudget
     createBudget({
-        ...formData,
-        budget_amount: Number(formData.budget_amount),
-
+      ...formData,
+      budgetAmount: parsedAmount,
     });
 
-    // Close modal and reset form
+    // Reset form
     setIsOpen(false);
     setFormData({
-      budget_name: "",
-      budget_amount: "",
-      budget_period: "monthly",
-      budget_category: "general",
+      budgetName: "",
+      budgetAmount: "",
+      budgetPeriod: "monthly",
+      budgetCategory: "general",
     });
   };
 
@@ -143,55 +133,52 @@ const NewBudgetForm = () => {
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
+            {/* Budget Name */}
             <div className="grid gap-2">
-              <Label htmlFor="name" className="text-left">
-                Budget Name
-              </Label>
+              <Label htmlFor="budgetName">Budget Name</Label>
               <Input
-                id="name"
-                name="budget_name"
-                placeholder="e.g., Monthly Expenses, Vacation Fund"
-                value={formData.budget_name}
+                id="budgetName"
+                name="budgetName"
+                placeholder="e.g., Vacation Fund"
+                value={formData.budgetName}
                 onChange={handleChange}
-                className={errors.budget_name ? "border-red-500" : ""}
+                className={errors.budgetName ? "border-red-500" : ""}
               />
-              {errors.budget_name && (
-                <p className="text-red-500 text-sm mt-1">{errors.budget_name}</p>
+              {errors.budgetName && (
+                <p className="text-red-500 text-sm mt-1">{errors.budgetName}</p>
               )}
             </div>
 
+            {/* Budget Amount */}
             <div className="grid gap-2">
-              <Label htmlFor="amount" className="text-left">
-                Budget Amount
-              </Label>
+              <Label htmlFor="budgetAmount">Budget Amount</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
                   $
                 </span>
                 <Input
-                  id="amount"
-                  name="budget_amount"
+                  id="budgetAmount"
+                  name="budgetAmount"
                   type="number"
                   placeholder="0.00"
-                  value={formData.budget_amount}
+                  value={formData.budgetAmount}
                   onChange={handleChange}
-                  className={`pl-8 ${errors.budget_amount ? "border-red-500" : ""}`}
+                  className={`pl-8 ${errors.budgetAmount ? "border-red-500" : ""}`}
                 />
               </div>
-              {errors.budget_amount && (
-                <p className="text-red-500 text-sm mt-1">{errors.budget_amount}</p>
+              {errors.budgetAmount && (
+                <p className="text-red-500 text-sm mt-1">{errors.budgetAmount}</p>
               )}
             </div>
 
+            {/* Period */}
             <div className="grid gap-2">
-              <Label htmlFor="period" className="text-left">
-                Budget Period
-              </Label>
+              <Label htmlFor="budgetPeriod">Budget Period</Label>
               <Select
-                value={formData.budget_period}
-                onValueChange={(value) => handleSelectChange("budget_period", value)}
+                value={formData.budgetPeriod}
+                onValueChange={(value) => handleSelectChange("budgetPeriod", value)}
               >
-                <SelectTrigger id="period">
+                <SelectTrigger id="budgetPeriod">
                   <SelectValue placeholder="Select period" />
                 </SelectTrigger>
                 <SelectContent>
@@ -205,15 +192,14 @@ const NewBudgetForm = () => {
               </Select>
             </div>
 
+            {/* Category */}
             <div className="grid gap-2">
-              <Label htmlFor="category" className="text-left">
-                Category
-              </Label>
+              <Label htmlFor="budgetCategory">Category</Label>
               <Select
-                value={formData.budget_category}
-                onValueChange={(value) => handleSelectChange("budget_category", value)}
+                value={formData.budgetCategory}
+                onValueChange={(value) => handleSelectChange("budgetCategory", value)}
               >
-                <SelectTrigger id="category">
+                <SelectTrigger id="budgetCategory">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>

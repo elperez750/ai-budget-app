@@ -41,7 +41,7 @@ const BudgetMain = () => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {budgets.map((budget: BudgetType) => (
-              <BudgetCategoryCard key={budget.budget_amount} individualBudget={budget} />
+              <BudgetCategoryCard key={budget.budgetId} individualBudget={budget} />
             ))}
           </div>
         </TabsContent>

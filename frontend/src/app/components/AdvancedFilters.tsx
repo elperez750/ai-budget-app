@@ -37,7 +37,7 @@ const AdvancedFilters = () => {
     });
   };
 
-
+  
   const handleSubmit = () => {
     setFilters(tempFilters)
   };

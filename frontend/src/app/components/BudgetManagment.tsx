@@ -14,7 +14,7 @@ const BudgetManagment = () => {
 
 
   const addedBudgets = budgets.reduce(
-    (accumulator, currentValue) => accumulator + currentValue.budget_amount,
+    (accumulator, currentValue) => accumulator + currentValue.budgetAmount,
     0 
   );
 
@@ -29,7 +29,7 @@ const sumByAmounts = (
 };
 
 
-const allBudgetCategories = budgets.map(budget => budget.budget_category)  
+const allBudgetCategories = budgets.map(budget => budget.budgetCategory)  
 const totalOfBudgetSpent = Math.abs(sumByAmounts(transactions, allBudgetCategories))
 
 const remainingInBudget = addedBudgets - totalOfBudgetSpent
