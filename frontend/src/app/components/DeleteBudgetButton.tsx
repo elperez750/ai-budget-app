@@ -14,27 +14,28 @@ import {
 import { Button } from "../../components/ui/button";
 import { Trash } from "lucide-react";
 import { useBudget } from "../context/BudgetContext";
-interface DeleteBudgetButtonProps {
-    budgetId: number
 
+interface DeleteBudgetButtonProps {
+  budgetId: number
 }
+
+
+
 const DeleteBudgetButton = ({budgetId}: DeleteBudgetButtonProps) => {
- const { deleteBudget } = useBudget();
+  const { deleteBudget } = useBudget();
+  const [open, setOpen] = useState(false);
 
   const handleDeleteBudget = () => {
     deleteBudget(budgetId);
     setOpen(false);
-
   };
 
-  const [open, setOpen] = useState(false);
   return (
     <div>
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogTrigger asChild>
-          <Button variant="destructive" size="sm">
-            <Trash className="mr-2 h-2 w-2 text-sm" />
-            Delete Budget
+          <Button variant="destructive" size="icon" className="h-8 w-8">
+            <Trash className="h-4 w-4" />
           </Button>
         </AlertDialogTrigger>
         <AlertDialogContent>

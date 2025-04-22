@@ -14,11 +14,7 @@ const BudgetMain = () => {
 
   const { budgets, fetchBudgets } = useBudget();
 
-  const getBudgets = () => {
-    
-
-  }
-
+  
   useEffect(() => {
     console.log("change in budget data")
     fetchBudgets()

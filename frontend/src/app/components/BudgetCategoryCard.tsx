@@ -14,6 +14,7 @@ import { ArrowDownCircle, ArrowUpCircle, Trash } from "lucide-react";
 import { useTransactions } from "../context/TransactionsContext";
 
 import DeleteBudgetButton from "./DeleteBudgetButton";
+import UpdateBudgetButton from "./UpdateBudgetButton";
 
 interface BudgetCategoryCardProps {
   individualBudget: BudgetType;
@@ -92,6 +93,7 @@ const BudgetCategoryCard = ({ individualBudget }: BudgetCategoryCardProps) => {
           <CardDescription className="flex justify-around text-sm font-medium mt-1 sm:mt-0 items-center gap-1 ">
             Budget: {formatCurrency(budgetAmount)}
            <DeleteBudgetButton budgetId={individualBudget.budgetId}/>
+           <UpdateBudgetButton  budget={individualBudget}/>
           </CardDescription>
         </div>
       </CardHeader>

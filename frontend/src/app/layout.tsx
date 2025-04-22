@@ -8,6 +8,7 @@ import { NavbarWrapper } from "./NavbarWrapper"; // new component
 import { AuthProvider } from "./context/AuthContext";
 import { PlaidProvider } from "./context/PlaidContext";
 import { TransactionProvider } from "./context/TransactionsContext";
+import { BudgetProvider } from "./context/BudgetContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,9 +33,11 @@ export default function RootLayout({
         <AuthProvider>
           <PlaidProvider>
             <TransactionProvider>
-              <NavbarWrapper />
-              {children}
-              <Toaster richColors toastOptions={{ style: { zIndex: 9999 } }} />
+              <BudgetProvider>
+                <NavbarWrapper />
+                {children}
+                <Toaster richColors toastOptions={{ style: { zIndex: 9999 } }} />
+              </BudgetProvider>
             </TransactionProvider>
           </PlaidProvider>
         </AuthProvider>

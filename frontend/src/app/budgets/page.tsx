@@ -19,22 +19,15 @@ const Page = () => {
 
   return (
     <ProtectedRoute>
-      <BudgetProvider>
         <div className="flex flex-col p-4 md:p-6 lg:p-10">
-          {budgets ? (
+          {budgets.length > 0 ? (
             <>
                <BudgetManagment />
                <BudgetMain />
-            
             </>
-          
-        
-       
            ) : (<NoBudgetsYet />)
-
         }
         </div>
-      </BudgetProvider>
     </ProtectedRoute>
   );
 };

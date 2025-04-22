@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from users.authentication import CookieJWTAuthentication
 from .models import Budget
-
+from rest_framework import status
 
 # Create your views here.
 class BudgetListView(APIView):
@@ -13,7 +13,7 @@ class BudgetListView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [CookieJWTAuthentication]
 
-    def get(self, request):
+    def get(self):
         """
         List all budgets.
         """
@@ -64,3 +64,35 @@ class BudgetDeleteView(APIView):
         budget.delete()
 
         return Response({"message": "Budget deleted successfully"}, status=200)
+    
+
+class BudgetUpdateView(APIView):
+    def put(self, request):
+        data = request.data
+        budget_id = data.get("budgetId")
+
+        try:
+            budget_data = data.get("budget")
+            budget = Budget.objects.get(id=budget_id)
+
+            budget.budget_name = budget_data.get("budgetName")
+            budget.budget_amount = budget_data.get("budgetAmount")
+            budget.budget_period = budget_data.get("budgetPeriod")
+            budget.budget_category = budget_data.get("budgetCategory")
+            budget.save()
+
+            # Manually make the object JSON serializable
+            response_data = {
+                "budgetId": budget.id,
+                "budgetName": budget.budget_name,
+                "budgetAmount": float(budget.budget_amount),
+                "budgetPeriod": budget.budget_period,
+                "budgetCategory": budget.budget_category,
+            }
+
+            return Response(response_data, status=status.HTTP_200_OK)
+
+        except Budget.DoesNotExist:
+            return Response({"error": "Budget not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    

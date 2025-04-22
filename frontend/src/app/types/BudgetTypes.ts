@@ -15,6 +15,6 @@ export interface BudgetType {
     error: string | null;
     fetchBudgets: () => Promise<void>;
     createBudget: (budgetData: Omit<BudgetType, 'budgetId'>) => Promise<void>;
-    //updateBudget: (id: string, budgetData: Partial<BudgetType>) => Promise<void>;
+    updateBudget: (id: number, budget: Partial<BudgetType>) => Promise<void>;
     deleteBudget: (id: number) => Promise<void>;
   }

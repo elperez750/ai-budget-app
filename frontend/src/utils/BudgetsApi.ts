@@ -1,4 +1,5 @@
 import { api } from './axios';
+import { BudgetType } from '../app/types/BudgetTypes'
 
 
 export const BudgetsApi = {
@@ -13,5 +14,12 @@ export const BudgetsApi = {
 
     async deleteBudget(budgetId: number) {
         return api.delete('/api/budgets/delete_budget/?budgetId=' + budgetId)
+    },
+
+    async updateBudget(budgetId: number, budget: Partial<BudgetType>) {
+
+        return api.put('/api/budgets/update_budget/', { budgetId, budget })
     }
+
+
 }

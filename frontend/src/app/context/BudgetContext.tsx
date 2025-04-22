@@ -40,6 +40,7 @@ const BudgetContext = createContext<BudgetContextType>({
   fetchBudgets: async () => {},
   createBudget: async () => {},
   deleteBudget: async () => {},
+  updateBudget: async () => {},
 } );
 
 export function BudgetProvider({ children }: { children: ReactNode }) {
@@ -114,6 +115,26 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const updateBudget = async(budgetId: number, budget: Partial<BudgetType>) => {
+    setIsLoading(true);
+    setError(null);
+
+    try{
+      const updatedBudget: any = await BudgetsApi.updateBudget(budgetId, budget);
+      setBudgets((prev) =>
+        prev.map((budget) => (budget.budgetId === budgetId ? { ...budget, ...updatedBudget } : budget))
+      );
+    }
+    catch (err) {
+      setError("Failed to update budget");
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+
+
+  }
+
   // 🪄 Load budgets when user is authenticated
   useEffect(() => {
     if (user) {
@@ -128,6 +149,7 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
     fetchBudgets,
     createBudget,
     deleteBudget,
+    updateBudget,
   };
 
   return (
