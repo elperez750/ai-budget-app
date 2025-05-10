@@ -3,9 +3,13 @@
 # dependencies
 
 **/node_modules/
+__pycache__/
+*.pyc
+.env
 
 env/
-
+venv
+env
 /.pnp
 .pnp.*
 .yarn/*
