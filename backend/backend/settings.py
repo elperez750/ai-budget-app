@@ -97,6 +97,31 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ("users.authentication.CookieJWTAuthentication",)
 }
 
+# Add these additional settings to handle preflight
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',  # Explicitly allow OPTIONS
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+# This is important for some browsers
+CORS_PREFLIGHT_MAX_AGE = 86400
+
 
 ROOT_URLCONF = "backend.urls"
 
