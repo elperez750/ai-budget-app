@@ -19,13 +19,23 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "https://ai-budget-app-git-master-elperez750s-projects.vercel.app",
+    "https://ai-budget-3cpv0zcvp-elperez750s-projects.vercel.app",  # Added https://
+    "https://ai-budget-gt0ng6pwu-elperez750s-projects.vercel.app",  # Add this line
+]
+
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "https://ai-budget-app-git-master-elperez750s-projects.vercel.app",
-    "ai-budget-3cpv0zcvp-elperez750s-projects.vercel.app",
+    "https://ai-budget-3cpv0zcvp-elperez750s-projects.vercel.app",
+    "https://ai-budget-gt0ng6pwu-elperez750s-projects.vercel.app",  # Add this line
 ]
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 
 SESSION_COOKIE_SAMESITE = "Lax"
@@ -78,11 +88,7 @@ MIDDLEWARE = [
 ]
 
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "https://ai-budget-app-git-master-elperez750s-projects.vercel.app",
-    "ai-budget-3cpv0zcvp-elperez750s-projects.vercel.app",
-]
+
 
 CORS_ALLOW_CREDENTIALS = True
 
