@@ -2,8 +2,8 @@ import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
 
 
 
-export const API_URL = 'http://localhost:8000';
-
+export const API_URL = process.env.NEXT_PUBLIC_API_URL!;
+ 
 
 export const axiosInstance: AxiosInstance = axios.create({
     baseURL: API_URL,
