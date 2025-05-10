@@ -4,7 +4,6 @@ import React from "react";
 import BudgetCard from "./BudgetCard";
 import BudgetHealth from "./BudgetHealth";
 import { useBudget } from "../../context/BudgetContext";
-import { transactions } from "../../data/TransactionData";
 import { TransactionType } from "../../types/TransactionTypes";
 import { useTransactions } from "../../context/TransactionsContext";
 import { mapCategories } from "./BudgetCategoryCard";
