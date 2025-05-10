@@ -54,7 +54,18 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["ai-budget-app.onrender.com", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = [
+    "ai-budget-app.onrender.com",
+    "ai-budget-app.up.railway.app",  # ✅ Add this
+    "localhost",
+    "127.0.0.1"
+]
+
+SESSION_COOKIE_SAMESITE = "None"
+SESSION_COOKIE_SECURE = True
+
+CSRF_COOKIE_SAMESITE = "None"
+CSRF_COOKIE_SECURE = True
 
 
 # Application definition
