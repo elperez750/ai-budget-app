@@ -71,11 +71,7 @@ const BudgetHealth: React.FC<BudgetHealthProps> = ({
         </div>
 
         <Progress value={healthPercentage} className="h-2" 
-          indicatorClassName={`${
-            healthPercentage < 30 ? "bg-red-500" : 
-            healthPercentage < 70 ? "bg-amber-500" : 
-            "bg-emerald-500"
-          }`}
+          
         />
 
         <div className="mt-6 space-y-4">
@@ -87,7 +83,7 @@ const BudgetHealth: React.FC<BudgetHealthProps> = ({
               </div>
               <span className="text-sm font-medium">68%</span>
             </div>
-            <Progress value={68} className="h-1.5" indicatorClassName="bg-indigo-500" />
+            <Progress value={68} className="h-1.5" />
           </div>
           
           <div className="bg-gray-50 p-3 rounded-lg">
@@ -98,7 +94,7 @@ const BudgetHealth: React.FC<BudgetHealthProps> = ({
               </div>
               <span className="text-sm font-medium">82%</span>
             </div>
-            <Progress value={82} className="h-1.5" indicatorClassName="bg-purple-500" />
+            <Progress value={82} className="h-1.5"  />
           </div>
           
           <div className="bg-gray-50 p-3 rounded-lg">
@@ -109,7 +105,7 @@ const BudgetHealth: React.FC<BudgetHealthProps> = ({
               </div>
               <span className="text-sm font-medium">45%</span>
             </div>
-            <Progress value={45} className="h-1.5" indicatorClassName="bg-teal-500" />
+            <Progress value={45} className="h-1.5" />
           </div>
         </div>
       </CardContent>
