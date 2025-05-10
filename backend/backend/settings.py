@@ -56,7 +56,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "ai-budget-app.onrender.com",
-    "ai-budget-app.up.railway.app",  # ✅ Add this
+    "ai-budget-app-production.up.railway.app",  # ✅ Add this
     "localhost",
     "127.0.0.1"
 ]
