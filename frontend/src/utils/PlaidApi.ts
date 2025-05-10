@@ -54,6 +54,6 @@ export const PlaidApi = {
     },
 
     async fetchTransactionsFromDB(accessToken: string) {
-        return api.get('/api/transactions/fetch_transactions_from_db/?accessToken=' + accessToken)
+        return api.get<{ transactions: { date: string }[] }>('/api/transactions/fetch_transactions_from_db/?accessToken=' + accessToken)
     }
 }
