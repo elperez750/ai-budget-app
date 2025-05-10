@@ -2,12 +2,12 @@
 
 import React from "react";
 
-import BudgetManagment from "../components/BudgetManagment";
-import BudgetMain from "../components/BudgetMain";
+import BudgetManagment from "../components/budget/BudgetManagment";
+import BudgetMain from "../components/budget/BudgetMain";
 import { BudgetProvider } from "../context/BudgetContext";
-import ProtectedRoute from "../components/ProtectedRoute";
+import ProtectedRoute from "../components/misc/ProtectedRoute";
 import { useBudget } from "../context/BudgetContext";
-import NoBudgetsYet from "../components/NoBudgets";
+import NoBudgetsYet from "../components/budget/NoBudgets";
 
 
 const Page = () => {

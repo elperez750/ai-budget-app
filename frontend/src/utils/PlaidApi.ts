@@ -13,9 +13,39 @@ export const PlaidApi = {
         return api.post('/api/transactions/sync_transactions/', {accessToken, cursor})
     },
 
-
+    /**
+     * Simulates new transactions for demo purposes
+     * (Useful for creating fresh transactions in the current month)
+     */
     async simulateTransactions(accessToken: string) {
         return api.post('/api/transactions/simulate_transactions/', { accessToken })
+    },
+
+    /**
+     * Generates mock transactions for the current month if no real transactions exist
+     * This helps ensure the dashboard always has data to display
+     */
+    async ensureCurrentMonthTransactions(accessToken: string) {
+        // First check if we have transactions for the current month
+        const result = await this.fetchTransactionsFromDB(accessToken);
+
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth();
+        const currentYear = currentDate.getFullYear();
+
+        // Filter to see if we have transactions for the current month
+        const hasCurrentMonthTransactions = result?.transactions?.some(transaction => {
+            const transDate = new Date(transaction.date);
+            return transDate.getMonth() === currentMonth &&
+                   transDate.getFullYear() === currentYear;
+        });
+
+        // If no current month transactions, simulate some
+        if (!hasCurrentMonthTransactions) {
+            return this.simulateTransactions(accessToken);
+        }
+
+        return result;
     },
 
     async hasAccessToken() {

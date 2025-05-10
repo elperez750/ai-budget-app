@@ -13,6 +13,9 @@ from plaid.model.transactions_refresh_request import TransactionsRefreshRequest
 from plaid.model.item_public_token_exchange_request import ItemPublicTokenExchangeRequest
 from plaid.model.webhook_type import WebhookType
 from plaid.model.transactions_sync_request import TransactionsSyncRequest
+from plaid_integration.models import AccessToken
+from transactions.models import Transaction
+
 
 load_dotenv()
 
@@ -122,3 +125,62 @@ class PlaidService:
 
         response = self.client.transactions_sync(request)
         return response.to_dict()  # Returns the full response as a dictionary, which includes the transactions and a new cursor if available.
+
+
+    def sync_all_transactions(self, access_token_string):
+        try:
+            access_token_obj = AccessToken.objects.get(access_token=access_token_string)
+        except AccessToken.DoesNotExist:
+            return {"error": "AccessToken not found."}
+
+        cursor = access_token_obj.cursor or None
+        all_added = []
+        all_modified = []
+        all_removed = []
+
+        while True:
+            response = self.sync_transactions(access_token_string, cursor)
+
+            added = response.get("added", [])
+            modified = response.get("modified", [])
+            removed = response.get("removed", [])
+            cursor = response.get("next_cursor")
+
+            all_added.extend(added)
+            all_modified.extend(modified)
+            all_removed.extend(removed)
+
+            if not response.get("has_more", False):
+                break
+
+
+        # Save cursor to AccessToken record
+        access_token_obj.cursor = cursor
+        access_token_obj.save()
+
+        self.save_transactions(access_token_obj, all_added + all_modified)
+        return {"added": len(all_added), "modified": len(all_modified), "removed": len(all_removed)}
+
+
+    def save_transactions(self, access_token_obj, transactions_data):
+        for txn in transactions_data:
+            transaction_id = txn["transaction_id"]
+            amount = txn["amount"]
+            name = txn.get("name", "")
+            date = txn["date"]
+            logo_url = txn.get("logo_url")
+            category = ", ".join(txn.get("category", [])) if txn.get("category") else None
+            currency = txn.get("iso_currency_code", "USD")
+
+            Transaction.objects.update_or_create(
+                transaction_id=transaction_id,
+                defaults={
+                    "access_token": access_token_obj,
+                    "amount": amount,
+                    "name": name,
+                    "date": date,
+                    "logo_url": logo_url,
+                    "category": category,
+                    "currency": currency
+                }
+            )

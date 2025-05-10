@@ -106,11 +106,47 @@ class SimulateTransactionsView(APIView):
             traceback.print_exc()
             return Response({"error": "Internal server error"}, status=500)
         
+
+        
 class PlaidWebhookView(APIView):
     def post(self, request):
-        """Handle webhooks from Plaid."""
+        webhook_type = request.data.get("webhook_type")
+        webhook_code = request.data.get("webhook_code")
+        item_id = request.data.get("item_id")
+
         logger.info("Received webhook: %s", request.data)
-        return Response(status=200)
-    
+
+        if webhook_type == "TRANSACTIONS":
+            try:
+                access_token_obj = AccessToken.objects.get(item_id=item_id)
+                access_token = access_token_obj.access_token
+
+                # 🔁 Loop through all transactions
+                synced = plaid_service.sync_all_transactions(access_token)
+
+                # 💾 Save to DB (you'd need a helper function for this)
+                for txn in synced["added"]:
+                    Transaction.objects.update_or_create(
+                        transaction_id=txn["transaction_id"],
+                        defaults={
+                            "amount": txn["amount"],
+                            "name": txn["name"],
+                            "date": txn["date"],
+                            "user_profile": access_token_obj.user_profile,
+                            # Add other fields you’re tracking
+                        },
+                    )
+
+                return Response({"status": "Transactions synced"}, status=200)
+
+            except AccessToken.DoesNotExist:
+                logger.error(f"No access token found for item_id: {item_id}")
+                return Response({"error": "Access token not found"}, status=404)
+            except Exception as e:
+                logger.error(f"Webhook sync failed: {str(e)}")
+                traceback.print_exc()
+                return Response({"error": str(e)}, status=500)
+
+        return Response({"status": "Ignored"}, status=200)
 
 

@@ -183,3 +183,21 @@ class FetchTransactionsFromDBView(APIView):
             logger.error(f"Error fetching transactions: {e}")
             traceback.print_exc()
             return Response({"error": "Internal server error"}, status=500)
+        
+
+class FetchTransactionTotalView(APIView):
+    def get(self, request):
+
+        access_token = request.query_params.get("accessToken")
+
+        if not access_token:
+            return Response({"error": "Missing access_token parameter"}, status=400)
+        else:
+            token_obj = AccessToken.objects.get(access_token=access_token)
+            all_transactions = Transaction.objects.filter(access_token=token_obj).values()
+
+       
+            transactions_amount = sum(transaction.amount for transaction in all_transactions)
+
+            print("transactions_amount", transactions_amount)
+            return Response({"total": transactions_amount}, status=200)

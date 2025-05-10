@@ -9,6 +9,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { PlaidProvider } from "./context/PlaidContext";
 import { TransactionProvider } from "./context/TransactionsContext";
 import { BudgetProvider } from "./context/BudgetContext";
+import { BankAccountProvider } from "./context/BankAccountContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,9 +35,11 @@ export default function RootLayout({
           <PlaidProvider>
             <TransactionProvider>
               <BudgetProvider>
-                <NavbarWrapper />
-                {children}
-                <Toaster richColors toastOptions={{ style: { zIndex: 9999 } }} />
+                <BankAccountProvider>
+                  <NavbarWrapper />
+                  {children}
+                  <Toaster richColors toastOptions={{ style: { zIndex: 9999 } }} />
+                </BankAccountProvider>
               </BudgetProvider>
             </TransactionProvider>
           </PlaidProvider>

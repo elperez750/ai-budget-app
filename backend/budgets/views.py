@@ -23,6 +23,10 @@ class BudgetListView(APIView):
 
 
 class BudgetCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [CookieJWTAuthentication]
+
+
     def post(self, request):
         """
         Create a new budget.
@@ -36,6 +40,7 @@ class BudgetCreateView(APIView):
 
         period = budget_object["budget"]["budget_period"]
         category = budget_object["budget"]["budget_category"]
+
         user = request.user
 
         budget = Budget.objects.create(budget_name=name, budget_amount=amount, user=user, budget_period=period, budget_category=category)

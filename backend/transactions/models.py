@@ -5,6 +5,7 @@ from plaid_integration.models import AccessToken
 # Create your models here.
 class Transaction(models.Model):
 
+    Budget = models.ForeignKey('budgets.Budget', on_delete=models.SET_NULL, related_name='transactions', blank=True, null=True)  # Link to Budget
     access_token = models.ForeignKey(AccessToken, on_delete=models.CASCADE, related_name='transactions')  # Link to AccessToken
     name = models.CharField(max_length=255)  # Name of the transaction (e.g., merchant name)
     amount = models.DecimalField(max_digits=10, decimal_places=2)  # Amount of the transaction

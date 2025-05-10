@@ -1,5 +1,5 @@
 import React from "react";
-import LoginRegisterCard from "../components/LoginRegisterCard";
+import LoginRegisterCard from "../components/auth/LoginRegisterCard";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
