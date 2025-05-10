@@ -1,3 +1,4 @@
+"use client";
 // app/layout.tsx
 import "./globals.css";
 import type { Metadata } from "next";
@@ -5,6 +6,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "../components/ui/sonner";
 import { NavbarWrapper } from "./NavbarWrapper"; // new component
 import { AuthProvider } from "./context/AuthContext";
+import { PlaidProvider } from "./context/PlaidContext";
+import { TransactionProvider } from "./context/TransactionsContext";
+import { BudgetProvider } from "./context/BudgetContext";
+import { BankAccountProvider } from "./context/BankAccountContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,9 +32,17 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-          <NavbarWrapper />
-          {children}
-          <Toaster richColors toastOptions={{ style: { zIndex: 9999 } }} />
+          <PlaidProvider>
+            <TransactionProvider>
+              <BudgetProvider>
+                <BankAccountProvider>
+                  <NavbarWrapper />
+                  {children}
+                  <Toaster richColors toastOptions={{ style: { zIndex: 9999 } }} />
+                </BankAccountProvider>
+              </BudgetProvider>
+            </TransactionProvider>
+          </PlaidProvider>
         </AuthProvider>
       </body>
     </html>

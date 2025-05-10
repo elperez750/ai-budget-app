@@ -2,7 +2,9 @@
 "use client"
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { api, UserType } from '../../utils/api';
+import { UserApi, UserType } from '../../utils/UserApi';
+import { usePlaid } from './PlaidContext'; // Ensure this is imported to set the access token in PlaidApi after login
+import { useTransactions } from './TransactionsContext'; // Ensure this is imported to set transactions after login
 
 interface AuthContextType {
   user: UserType | null;
@@ -24,13 +26,17 @@ const AuthContext = createContext<AuthContextType>({
 // Provider component
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserType | null>(null);
+  const { setAccessToken } = usePlaid(); // Get the function to set access token from PlaidContext
+  const { setTransaction } = useTransactions(); // Get the function to set transactions from TransactionsContext, if needed
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   
+
   // Check authentication status on initial load with detailed logging
   useEffect(() => {
     console.log("=====================================");
     console.log("AUTH CHECK STARTED ON PAGE LOAD/REFRESH");
+    
     
     async function checkAuth() {
       try {
@@ -41,7 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
         // Make the request with detailed error handling
         try {
-          const userData = await api.getUserProfile();
+          const userData = await UserApi.getUserProfile();
           console.log("✅ User profile fetch successful:", userData);
           setUser(userData);
           console.log("User state updated with profile data");
@@ -80,7 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     try {
       console.log("Making API request to login endpoint");
-      const data = await api.login(username, password);
+      const data = await UserApi.login(username, password);
       console.log("✅ Login API response received:", data);
       
       // Check if the response contains user data
@@ -123,17 +129,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     try {
       console.log("Making API request to logout endpoint");
-      await api.logout();
+      await UserApi.logout();
+      setAccessToken(null); // Clear the access token in Plaid context, if applicable
+      setTransaction([]); // Clear transactions in the Transactions context, if applicable
       console.log("✅ Logout API call successful");
     } catch (error) {
       console.error("❌ Logout error:", error);
     } finally {
       console.log("Clearing user state regardless of logout API result");
       setUser(null);
-      console.log("Redirecting to auth page");
-      router.push('/auth');
-      console.log("Logout process completed");
-      console.log("=====================================");
+      
     }
   };
 

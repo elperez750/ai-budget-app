@@ -1,19 +1,47 @@
-import { transactions, TransactionType } from "./TransactionData";
+import { BudgetType } from "../types/BudgetTypes";
 
-export interface BudgetType {
-    id: number;
-    category: string;
-    budget: number;
-}
-
-
-export const budgets: BudgetType[] = [
-    {id: 0, category: "Housing", budget: 1200.00},
-    {id: 1, category: "Food & Dining", budget:350.00},
-    {id: 2, category: "Transportation", budget:500.00}
-]
-
-
-
-  
-
+// Mock budget data that aligns with the BudgetType interface
+export const mockBudgets: BudgetType[] = [
+  {
+    budgetId: 1,
+    budgetName: "Monthly Rent",
+    budgetAmount: 1200.00,
+    budgetPeriod: "monthly",
+    budgetCategory: "Housing"
+  },
+  {
+    budgetId: 2,
+    budgetName: "Groceries",
+    budgetAmount: 500.00,
+    budgetPeriod: "monthly",
+    budgetCategory: "Food & Dining"
+  },
+  {
+    budgetId: 3,
+    budgetName: "Gas & Auto",
+    budgetAmount: 300.00,
+    budgetPeriod: "monthly",
+    budgetCategory: "Transportation"
+  },
+  {
+    budgetId: 4,
+    budgetName: "Utilities",
+    budgetAmount: 150.00,
+    budgetPeriod: "monthly",
+    budgetCategory: "Utilities"
+  },
+  {
+    budgetId: 5,
+    budgetName: "Entertainment",
+    budgetAmount: 200.00,
+    budgetPeriod: "monthly",
+    budgetCategory: "Entertainment"
+  },
+  {
+    budgetId: 6,
+    budgetName: "Shopping",
+    budgetAmount: 250.00,
+    budgetPeriod: "monthly",
+    budgetCategory: "Shopping"
+  }
+];

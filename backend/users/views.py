@@ -54,6 +54,7 @@ class UserProfileView(APIView):
         user = request.user
 
         user_data = {
+            "id": user.id,
             "username": user.username,
             "email": user.email
         }
@@ -85,8 +86,10 @@ class LoginView(APIView):
             #The reason we do user.email is because we did not pass in the email in the request.
             #so when we authenticate, we basically return all attributes of user, including email
             response_data = {
+                "id": user.id,  
                 "username": username,
                 "email": user.email,
+                
             }
 
 
