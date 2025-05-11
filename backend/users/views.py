@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
 from users.authentication import CookieJWTAuthentication
+import os
 
 COOKIE_SETTINGS = {
     "httponly": True,
