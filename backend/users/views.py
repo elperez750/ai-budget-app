@@ -12,7 +12,7 @@ import os
 COOKIE_SETTINGS = {
     "httponly": True,
     "secure": not bool(os.getenv("DEBUG", "False").lower() == "true"),
-    "samesite": "Lax",
+    "samesite": "None",
     "path": "/"
 }
 
