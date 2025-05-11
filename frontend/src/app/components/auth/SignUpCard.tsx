@@ -16,6 +16,7 @@ import { Button } from "../../../components/ui/button";
 import { Label } from "../../../components/ui/label";
 import { Input } from "../../../components/ui/input";
 import { toast } from "sonner";
+import { API_URL } from "../../../utils/axios";
 
 interface SignUpCardProps {
   setActiveTab: (value: string) => void;
@@ -28,6 +29,7 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ setActiveTab }) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [signupError, setSignupError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +49,7 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ setActiveTab }) => {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/users/signup/",
+        `${API_URL}/api/users/signup/`,
         {
           username,
           email,
@@ -57,6 +59,8 @@ const SignUpCard: React.FC<SignUpCardProps> = ({ setActiveTab }) => {
           headers: {
             "Content-Type": "application/json",
           },
+                withCredentials: true,  // Add this line
+
         }
       );
 
