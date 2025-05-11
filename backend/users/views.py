@@ -90,9 +90,21 @@ class CookieTokenRefreshView(APIView):
             refresh = RefreshToken(refresh_token)
             access_token = str(refresh.access_token)
 
-            response = Response({"detail": "Token refreshed successfully"})
+            # Get user ID from the token
+            user_id = refresh.payload.get('user_id')
+            user = User.objects.get(id=user_id)
+
+            # Return user data along with refreshed token
+            response = Response({
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "detail": "Token refreshed successfully"
+            })
             response.set_cookie("access_token", access_token, max_age=1800, **COOKIE_SETTINGS)
             return response
 
         except TokenError:
             return Response({"detail": "Invalid or expired token"}, status=401)
+        except User.DoesNotExist:
+            return Response({"detail": "User not found"}, status=401)

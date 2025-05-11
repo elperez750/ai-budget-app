@@ -30,6 +30,9 @@ CORS_ALLOWED_ORIGINS = [
     "https://ai-budget-app-git-master-elperez750s-projects.vercel.app",
     "https://ai-budget-3cpv0zcvp-elperez750s-projects.vercel.app",
     "https://ai-budget-gt0ng6pwu-elperez750s-projects.vercel.app",
+    "https://ai-budget-app.vercel.app",
+    "https://ai-budget-app-elperez750s-projects.vercel.app",
+    "https://ai-budget-app-elperez750.vercel.app",
 ]
 CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 

@@ -24,19 +24,34 @@ axiosInstance.interceptors.response.use(
             originalRequest._retry = true;
 
             try {
-                await axios.post(
+                // Get user data when refreshing token
+                const refreshResponse = await axios.post(
                     `${API_URL}/api/users/refresh/`,
                     {},
                     { withCredentials: true}
                 );
 
+                // Store user data in localStorage for persistence
+                if (refreshResponse.data && refreshResponse.data.username) {
+                    localStorage.setItem('user', JSON.stringify({
+                        id: refreshResponse.data.id,
+                        username: refreshResponse.data.username,
+                        email: refreshResponse.data.email
+                    }));
+
+                    // Dispatch an event to notify AuthContext
+                    window.dispatchEvent(new CustomEvent('auth:refreshed', {
+                        detail: refreshResponse.data
+                    }));
+                }
+
                 return axiosInstance(originalRequest)
             } catch(refreshError) {
+                // Clear any stored user data on refresh failure
+                localStorage.removeItem('user');
+                window.dispatchEvent(new Event('auth:logout'));
                 return Promise.reject(refreshError);
-
             }
-
-        
         }
 
         return Promise.reject(error)

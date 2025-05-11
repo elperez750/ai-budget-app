@@ -36,24 +36,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     console.log("=====================================");
     console.log("AUTH CHECK STARTED ON PAGE LOAD/REFRESH");
-    
-    
+
+    // First, try to get user from localStorage for immediate state restoration
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        console.log("✅ Found user in localStorage:", parsedUser);
+        setUser(parsedUser);
+      } catch (e) {
+        console.error("Failed to parse stored user:", e);
+        localStorage.removeItem('user');
+      }
+    }
+
     async function checkAuth() {
       try {
         console.log("Attempting to fetch user profile from /api/users/me endpoint");
-        
+
         // Check if cookies exist first
         console.log("Cookies present in request:", document.cookie ? "Yes" : "No");
-        
+
         // Make the request with detailed error handling
         try {
           const userData = await UserApi.getUserProfile();
           console.log("✅ User profile fetch successful:", userData);
           setUser(userData);
+          localStorage.setItem('user', JSON.stringify(userData));
           console.log("User state updated with profile data");
         } catch (error: any) {
           console.error("❌ User profile fetch failed with error:", error);
-          
+
           // Log more details about the error
           if (error.response) {
             console.error("Response status:", error.response.status);
@@ -64,9 +77,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           } else {
             console.error("Error message:", error.message);
           }
-          
-          console.log("Setting user to null due to failed authentication check");
-          setUser(null);
+
+          // Only clear user if we didn't already set it from localStorage
+          if (!storedUser) {
+            console.log("Setting user to null due to failed authentication check");
+            setUser(null);
+          }
         }
       } finally {
         console.log("Auth check completed, setting isLoading to false");
@@ -74,8 +90,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.log("=====================================");
       }
     }
-    
+
+    // Set up event listeners for auth events
+    const handleTokenRefreshed = (event: any) => {
+      console.log("Auth refreshed event received", event.detail);
+      setUser(event.detail);
+    };
+
+    const handleLogout = () => {
+      console.log("Auth logout event received");
+      setUser(null);
+    };
+
+    window.addEventListener('auth:refreshed', handleTokenRefreshed as EventListener);
+    window.addEventListener('auth:logout', handleLogout);
+
+    // Always check with the server
     checkAuth();
+
+    return () => {
+      window.removeEventListener('auth:refreshed', handleTokenRefreshed as EventListener);
+      window.removeEventListener('auth:logout', handleLogout);
+    };
   }, []);
 
   // Login function with enhanced logging
@@ -83,27 +119,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     console.log("=====================================");
     console.log("LOGIN FUNCTION CALLED");
     console.log("Attempting login for username:", username);
-    
+
     try {
       console.log("Making API request to login endpoint");
       const data = await UserApi.login(username, password);
       console.log("✅ Login API response received:", data);
-      
+
       // Check if the response contains user data
       if (!data.username) {
         console.error("❌ API response missing user data:", data);
         return { success: false, error: "Invalid response format" };
       }
-      
+
       console.log("Setting user state with:", data.username);
       setUser(data);
+
+      // Store user in localStorage for persistence
+      localStorage.setItem('user', JSON.stringify(data));
+      console.log("User data saved to localStorage");
+
       console.log("Login completed successfully");
       console.log("=====================================");
       return { success: true };
-      
+
     } catch (error: any) {
       console.error("❌ Login failed with error:", error);
-      
+
       // Log more details about the error
       if (error.response) {
         console.error("Response status:", error.response.status);
@@ -113,11 +154,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         console.error("Error message:", error.message);
       }
-      
+
       console.log("=====================================");
-      return { 
-        success: false, 
-        error: error.response?.data?.message || 'Login failed' 
+      return {
+        success: false,
+        error: error.response?.data?.message || 'Login failed'
       };
     }
   };
@@ -126,7 +167,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = async () => {
     console.log("=====================================");
     console.log("LOGOUT FUNCTION CALLED");
-    
+
     try {
       console.log("Making API request to logout endpoint");
       await UserApi.logout();
@@ -138,7 +179,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       console.log("Clearing user state regardless of logout API result");
       setUser(null);
-      
+
+      // Clear user data from localStorage
+      localStorage.removeItem('user');
+      console.log("User data cleared from localStorage");
+
+      // Dispatch logout event
+      window.dispatchEvent(new Event('auth:logout'));
+      console.log("Auth logout event dispatched");
     }
   };
 
